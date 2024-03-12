@@ -15,7 +15,7 @@ const AppHeader: React.FC = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        position="static"
+        position="fixed"
         sx={{
           bgcolor: "#fff",
           color: "#004038",
@@ -30,10 +30,10 @@ const AppHeader: React.FC = () => {
             edge="start"
             color="inherit"
             aria-label="logo"
-            sx={{ mr: 2 }}
+            sx={{ mr: 2, padding: 1 }}
             onClick={handleClickLogo}
           >
-            <img src={logo} alt="Logo" height="50" />
+            <img src={logo} alt="Logo" height="40" />
           </IconButton>
           <Box style={{ flexGrow: 1 }}></Box>
           <Button color="inherit">Login</Button>
