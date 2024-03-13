@@ -19,10 +19,10 @@ const BackgroundImage = styled("div")({
   width: "100%",
 });
 
-const Jumbotron: React.FC = () => {
-  function handleGetStarted() {
-    console.log("click started");
-  }
+interface JumbotronProps {
+  onSignup: () => void;
+}
+const Jumbotron: React.FC<JumbotronProps> = ({ onSignup }) => {
   return (
     <StyledJumbotron>
       <Box
@@ -41,7 +41,7 @@ const Jumbotron: React.FC = () => {
           <Button
             variant="contained"
             sx={{ bgcolor: "#56DA02", color: "#fff" }}
-            onClick={handleGetStarted}
+            onClick={onSignup}
           >
             Get Started
           </Button>
