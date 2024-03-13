@@ -1,4 +1,4 @@
-import { Box, Typography, styled } from "@mui/material";
+import { IconButton, Typography, styled } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 
@@ -26,14 +26,21 @@ const AppFooter: React.FC = () => {
     <>
       <StyledContainer>
         <StyledLinksContainer>
-          <Box sx={{ paddingRight: "10px" }}>
+          <IconButton>
             <FacebookIcon />
-          </Box>
-          <Box sx={{ paddingRight: "10px" }}>
+          </IconButton>
+
+          <IconButton>
             <InstagramIcon />
-          </Box>
-          <Typography sx={{ paddingRight: "20px" }}>CONTACT US</Typography>
-          <Typography>POLICY</Typography>
+          </IconButton>
+
+          <Typography
+            style={{ cursor: "pointer" }}
+            sx={{ paddingRight: "20px" }}
+          >
+            CONTACT US
+          </Typography>
+          <Typography style={{ cursor: "pointer" }}>POLICY</Typography>
         </StyledLinksContainer>
         <Typography>copyright 2024</Typography>
       </StyledContainer>
