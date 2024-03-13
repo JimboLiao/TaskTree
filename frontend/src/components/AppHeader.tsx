@@ -6,7 +6,10 @@ import IconButton from "@mui/material/IconButton";
 import logo from "../assets/logo-1.png";
 import { useNavigate } from "react-router-dom";
 
-const AppHeader: React.FC = () => {
+interface AppHeaderProps {
+  onLogin: () => void;
+}
+const AppHeader: React.FC<AppHeaderProps> = ({ onLogin }) => {
   let navigate = useNavigate();
   function handleClickLogo(): void {
     navigate("/");
@@ -36,7 +39,9 @@ const AppHeader: React.FC = () => {
             <img src={logo} alt="Logo" height="40" />
           </IconButton>
           <Box style={{ flexGrow: 1 }}></Box>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={onLogin}>
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>
