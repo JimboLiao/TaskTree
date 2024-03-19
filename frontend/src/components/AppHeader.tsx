@@ -8,12 +8,32 @@ import { useNavigate } from "react-router-dom";
 
 interface AppHeaderProps {
   onLogin: () => void;
+  isLoggedIn: boolean;
 }
-const AppHeader: React.FC<AppHeaderProps> = ({ onLogin }) => {
+const AppHeader: React.FC<AppHeaderProps> = ({
+  isLoggedIn = false,
+  onLogin,
+}) => {
   let navigate = useNavigate();
   function handleClickLogo(): void {
     navigate("/");
   }
+
+  const headerButton = isLoggedIn ? (
+    <Button
+      color="inherit"
+      onClick={
+        //@todo handle member btn
+        () => console.log("member")
+      }
+    >
+      Member
+    </Button>
+  ) : (
+    <Button color="inherit" onClick={onLogin}>
+      Login
+    </Button>
+  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -39,9 +59,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ onLogin }) => {
             <img src={logo} alt="Logo" height="40" />
           </IconButton>
           <Box style={{ flexGrow: 1 }}></Box>
-          <Button color="inherit" onClick={onLogin}>
-            Login
-          </Button>
+          {headerButton}
         </Toolbar>
       </AppBar>
     </Box>
