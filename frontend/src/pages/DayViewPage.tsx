@@ -6,6 +6,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import TimeToolbar from "../components/TimeToolbar";
 import { useRef, useState } from "react";
 import TaskList from "../components/TaskList";
+import { tasks } from "../data/data";
 
 const StyledContainer = styled("div")({
   height: "100%",
@@ -36,49 +37,6 @@ const StyledScheduleSection = styled("section")({
   paddingLeft: "50px",
   paddingRight: "50px",
 });
-
-//@todo tasks are temporarily data, should be removed
-const tasks = [
-  {
-    title: "Design Meeting",
-    start: "Mar. 1",
-    end: "Mar. 3",
-    description: "3/4 Design Phase Review",
-    statusColor: "#969696",
-    importanceColor: "#FF0000",
-    categoryColor: "#1983FF",
-  },
-  {
-    title: "Project A",
-    start: "Mar. 1",
-    end: "Mar. 2",
-    description:
-      "some description heresome description heresome description heresome description heresome description heresome description heresome description here",
-    statusColor: "#DDD",
-    importanceColor: "#FF9900",
-    categoryColor: "#1983FF",
-  },
-  {
-    title:
-      "Project AProject AProject AProject AProject AProject AProject AProject A",
-    start: "Mar. 1",
-    end: "Mar. 2",
-    description: "",
-    statusColor: "#DDD",
-    importanceColor: "#FF9900",
-    categoryColor: "#1983FF",
-  },
-  {
-    title:
-      "Project AProject AProject AProject AProject AProject AProject AProject A",
-    start: "Mar. 1",
-    end: "Mar. 2",
-    description: "",
-    statusColor: "#DDD",
-    importanceColor: "#FF9900",
-    categoryColor: "#1983FF",
-  },
-];
 
 const DayViewPage = () => {
   const calendarRef = useRef<FullCalendar | null>(null);
