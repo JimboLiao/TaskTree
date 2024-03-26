@@ -14,6 +14,7 @@ interface TaskCardProps {
   statusColor: string;
   importanceColor: string;
   categoryColor: string;
+  onTaskCard: () => void;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({
@@ -24,6 +25,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   statusColor,
   importanceColor,
   categoryColor,
+  onTaskCard,
 }) => {
   return (
     <Card
@@ -32,6 +34,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         margin: 2,
         borderLeft: `5px solid ${categoryColor}`,
       }}
+      onClick={onTaskCard}
     >
       <CardActionArea sx={{ height: "100%", minHeight: "125px" }}>
         <CardContent>
