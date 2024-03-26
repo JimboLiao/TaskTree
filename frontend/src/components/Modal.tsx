@@ -9,12 +9,14 @@ const StyledOverlay = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  zIndex: 2000,
+  zIndex: 1300,
 });
 
 const StyledModalBody = styled("div")({
   backgroundColor: "#FFFFFF",
   borderRadius: "15px",
+  maxHeight: "90vh",
+  overflow: "auto",
 });
 
 interface ModalProps {
