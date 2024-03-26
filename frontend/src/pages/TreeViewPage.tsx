@@ -17,7 +17,7 @@ const StyledContainer = styled("div")({
 const TreeViewPage = () => {
   return (
     <StyledContainer>
-      <WorkspaceTitle title="treeview" />
+      <WorkspaceTitle title="Treeview" />
       <Tree treeData={treeData} />
     </StyledContainer>
   );
