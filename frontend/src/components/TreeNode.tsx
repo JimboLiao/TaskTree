@@ -6,7 +6,7 @@ import Tree from "./Tree";
 import { useState } from "react";
 
 //@todo interface
-const TreeNode = ({ node }) => {
+const TreeNode = ({ node, onEdit }) => {
   const {
     title,
     start,
@@ -69,7 +69,7 @@ const TreeNode = ({ node }) => {
         <Box sx={{ paddingRight: "8px", color: "#A5A5A5" }}>
           {start} - {end}
         </Box>
-        <IconButton>
+        <IconButton onClick={onEdit}>
           <EditIcon />
         </IconButton>
         {showChildrenBtn}

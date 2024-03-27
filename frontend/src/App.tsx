@@ -7,6 +7,8 @@ import DayViewPage from "./pages/DayViewPage";
 import CalendarViewPage from "./pages/CalendarViewPage";
 import TreeViewPage from "./pages/TreeViewPage";
 import WorkspaceRoot from "./components/WorkspaceRoot";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 function App() {
   const router = createBrowserRouter([
@@ -38,7 +40,9 @@ function App() {
 
   return (
     <>
-      <RouterProvider router={router}></RouterProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </>
   );
 }

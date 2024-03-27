@@ -1,5 +1,4 @@
-import { Typography, styled } from "@mui/material";
-import logo from "../assets/logo-1.png";
+import { styled } from "@mui/material";
 const StyledOverlay = styled("div")({
   width: "100%",
   height: "100%",
@@ -10,25 +9,14 @@ const StyledOverlay = styled("div")({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  zIndex: 2000,
+  zIndex: 1300,
 });
 
 const StyledModalBody = styled("div")({
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  padding: "100px",
   backgroundColor: "#FFFFFF",
   borderRadius: "15px",
-});
-
-const StyledLogoContainer = styled("div")({
-  display: "flex",
-  paddingBottom: "20px",
-  justifyItems: "flex-start",
-  alignItems: "baseline",
-  width: "100%",
+  maxHeight: "90vh",
+  overflow: "auto",
 });
 
 interface ModalProps {
@@ -42,15 +30,6 @@ const Modal: React.FC<ModalProps> = ({ children, onClose, isOpen }) => {
   return (
     <StyledOverlay onClick={onClose}>
       <StyledModalBody onClick={(e) => e.stopPropagation()}>
-        <StyledLogoContainer>
-          <img src={logo} alt="Logo" height="40" />
-          <Typography
-            variant="h4"
-            sx={{ color: "#004038", paddingLeft: "5px" }}
-          >
-            TaskTree
-          </Typography>
-        </StyledLogoContainer>
         {children}
       </StyledModalBody>
     </StyledOverlay>

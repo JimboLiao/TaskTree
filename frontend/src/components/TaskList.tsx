@@ -1,9 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import TaskCard from "./TaskCard";
+import { useState } from "react";
+import TaskTableModal from "./TaskTableModal";
 
 //@todo add tasks type
 const TaskList = ({ tasks }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       {tasks.length > 0 ? (
@@ -17,6 +21,7 @@ const TaskList = ({ tasks }) => {
             statusColor={task.statusColor}
             importanceColor={task.importanceColor}
             categoryColor={task.categoryColor}
+            onTaskCard={handleClickTaskCard}
           />
         ))
       ) : (
@@ -33,8 +38,18 @@ const TaskList = ({ tasks }) => {
           <Typography>No Tasks here.</Typography>
         </Box>
       )}
+      <TaskTableModal isModalOpen={isModalOpen} onModalClose={handleClose} />
     </>
   );
+
+  function handleClickTaskCard() {
+    setIsModalOpen(true);
+  }
+  function handleClose() {
+    setIsModalOpen(false);
+    // @todo close modal
+    // send request to api to change update task data
+  }
 };
 
 export default TaskList;
