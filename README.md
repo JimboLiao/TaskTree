@@ -28,9 +28,14 @@ TaskTree is a platform to manage your tasks. Manage your tasks, cooperate with y
 - Express.js
 - Socket.io
 - OAuth
+- RabbitMQ
 
 ### Deployment
 
-TBD
+- GCP
+
+### DB schema
+
+![db_schema](./image/db_schema.png)
 
 _This is a personal project for personal uses_
