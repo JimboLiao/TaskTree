@@ -1,5 +1,5 @@
 import express from "express";
-import { checkBodyParams } from "../middlewares/checkParams";
+import { checkBodyParams } from "../utils/checkParams";
 import * as userController from "../controllers/users";
 import authJWT from "../middlewares/authJWT";
 
