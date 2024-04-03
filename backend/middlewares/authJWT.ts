@@ -1,32 +1,31 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import {
+  ForbiddenError,
+  UnauthorizedError,
+} from "../utils/errors/customErrors";
 
 interface tokenPayload extends JwtPayload {
   id?: number;
 }
 const authJWT = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.get("authorization");
-  const token = authHeader && authHeader.replace("Bearer ", "");
-  if (!token) {
-    res.status(401).json({ message: "error", err: "No JWT" });
-    return;
-  }
-
   try {
+    const authHeader = req.get("authorization");
+    const token = authHeader && authHeader.replace("Bearer ", "");
+    if (!token) {
+      throw new UnauthorizedError("No JWT");
+    }
+
     // verify token
     const key = process.env.TOKEN_SECRET || "";
     const decoded = jwt.verify(token, key) as tokenPayload;
-    if (!decoded.id) {
-      return res
-        .status(403)
-        .json({ message: "error", err: "JWT payload does not contain id" });
+    if (!decoded.id || decoded.id.toString() !== req.params.id) {
+      throw new ForbiddenError("Invalid or expired token");
     }
     res.locals.id = decoded.id;
     next();
   } catch (err) {
-    return res
-      .status(403)
-      .json({ message: "error", err: "Invalid or expired JWT" });
+    next(err);
   }
 };
 
