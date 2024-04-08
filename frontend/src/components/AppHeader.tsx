@@ -5,35 +5,34 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import logo from "../assets/logo-1.png";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../contexts/UserContext";
 
 interface AppHeaderProps {
   onLogin: () => void;
-  isLoggedIn: boolean;
 }
-const AppHeader: React.FC<AppHeaderProps> = ({
-  isLoggedIn = false,
-  onLogin,
-}) => {
+const AppHeader: React.FC<AppHeaderProps> = ({ onLogin }) => {
   let navigate = useNavigate();
+  const { user } = useUserContext();
   function handleClickLogo(): void {
     navigate("/");
   }
 
-  const headerButton = isLoggedIn ? (
-    <Button
-      color="inherit"
-      onClick={
-        //@todo handle member btn
-        () => console.log("member")
-      }
-    >
-      Member
-    </Button>
-  ) : (
-    <Button color="inherit" onClick={onLogin}>
-      Login
-    </Button>
-  );
+  const headerButton =
+    user !== undefined ? (
+      <Button
+        color="inherit"
+        onClick={
+          //@todo handle member btn
+          () => console.log("member")
+        }
+      >
+        Member
+      </Button>
+    ) : (
+      <Button color="inherit" onClick={onLogin}>
+        Login
+      </Button>
+    );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
