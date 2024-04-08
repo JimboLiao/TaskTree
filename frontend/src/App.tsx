@@ -9,6 +9,7 @@ import TreeViewPage from "./pages/TreeViewPage";
 import WorkspaceRoot from "./components/WorkspaceRoot";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { UserProvider } from "./contexts/UserContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -41,7 +42,9 @@ function App() {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <UserProvider>
         <RouterProvider router={router} />
+        </UserProvider>
       </LocalizationProvider>
     </>
   );
