@@ -43,7 +43,7 @@ function App() {
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <UserProvider>
-        <RouterProvider router={router} />
+          <RouterProvider router={router} />
         </UserProvider>
       </LocalizationProvider>
     </>
