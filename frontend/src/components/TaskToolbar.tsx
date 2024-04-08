@@ -1,5 +1,6 @@
-import { Box, Button, Input, styled } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { useState } from "react";
+import DataEntry from "./DataEntry";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -27,30 +28,20 @@ const TaskToolbar: React.FC<TaskToolbarProps> = ({ onAddTask }) => {
         </Box>
       </label>
       <Box>
-        <Input
+        <DataEntry
+          newData={newTask}
           placeholder="New Task..."
-          value={newTask}
-          onChange={(e) => {
-            setNewTask(e.target.value);
-          }}
+          onChangeNewData={handleChangeNewTask}
+          onAddNewData={onAddTask}
+          disabledCondition={newTask === ""}
         />
-        <Box paddingLeft="4px" display="inline-block">
-          <Button
-            variant="outlined"
-            sx={{
-              padding: 0,
-              border: "1px solid #A5A5A5",
-              color: "#004038",
-              height: "24px",
-            }}
-            onClick={onAddTask}
-          >
-            Add
-          </Button>
-        </Box>
       </Box>
     </StyledContainer>
   );
+
+  function handleChangeNewTask(event: React.ChangeEvent<HTMLInputElement>) {
+    setNewTask(event.target.value);
+  }
 };
 
 export default TaskToolbar;
