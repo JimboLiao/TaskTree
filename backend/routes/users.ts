@@ -17,6 +17,9 @@ router.post(
   userController.login
 );
 
+router.post("/googleLogin", userController.googleLogin);
+router.get("/googleOAuth", userController.googleCallback);
+
 router.get("/:id", authJWT, userController.getUser);
 
 export default router;
