@@ -7,7 +7,7 @@ const SALTROUND = 10;
 interface User {
   id: number;
   email: string;
-  password: string;
+  password: string | null;
   username: string | null;
   createTime: Date;
   updateTime: Date;
@@ -18,9 +18,10 @@ const createUser = async ({
   password,
 }: {
   email: string;
-  password: string;
+  password?: string;
 }): Promise<User> => {
-  const hashpassword = await bcrypt.hash(password, SALTROUND);
+  let hashpassword = null;
+  if (password) hashpassword = await bcrypt.hash(password, SALTROUND);
   const date = new Date();
   const user = await prisma.user.create({
     data: {
@@ -47,6 +48,8 @@ const loginUser = async ({
   });
 
   if (!user) throw new NotFoundError("User not found");
+  if (!user.password)
+    throw new NotFoundError("No password, try 3rd party login.");
 
   const match = await bcrypt.compare(password, user.password);
   if (match) return user;
@@ -73,4 +76,19 @@ const getUserById = async (id: number) => {
   return user;
 };
 
-export { createUser, loginUser, getUserById };
+const getUserByEmail = async (email: string) => {
+  const user = await prisma.user.findUnique({
+    where: { email: email },
+    select: {
+      password: false,
+      id: true,
+      email: true,
+      username: true,
+      createTime: true,
+      updateTime: true,
+    },
+  });
+  return user;
+};
+
+export { createUser, loginUser, getUserById, getUserByEmail };
