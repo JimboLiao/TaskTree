@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import prisma from "./prismaClient";
+import { NotFoundError, ValidationError } from "../utils/errors/customErrors";
 
 const SALTROUND = 10;
 
@@ -45,12 +46,31 @@ const loginUser = async ({
     },
   });
 
-  if (!user) throw new Error("user not found");
+  if (!user) throw new NotFoundError("User not found");
 
   const match = await bcrypt.compare(password, user.password);
   if (match) return user;
 
-  throw new Error("password mismatch");
+  throw new ValidationError("Password mismatch");
 };
 
-export { createUser, loginUser };
+const getUserById = async (id: number) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      password: false,
+      id: true,
+      email: true,
+      username: true,
+      createTime: true,
+      updateTime: true,
+    },
+  });
+
+  if (!user) throw new NotFoundError("User not found");
+  return user;
+};
+
+export { createUser, loginUser, getUserById };

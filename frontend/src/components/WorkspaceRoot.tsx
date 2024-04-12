@@ -22,7 +22,7 @@ const WorkspaceRoot = () => {
   }
   return (
     <>
-      <AppHeader onLogin={handleLogin} isLoggedIn={true} />
+      <AppHeader onLogin={handleLogin} />
       <StyledContainer>
         <StyledWorkspaceContainer>
           <WorkspaceSideBar />

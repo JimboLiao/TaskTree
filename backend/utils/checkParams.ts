@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { BadRequestError } from "./errors/customErrors";
 
 /**
  * Generates middleware to check for required parameters in the request body.
@@ -10,8 +11,7 @@ const checkBodyParams = (requiredParams: string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     for (const param of requiredParams) {
       if (!req.body.hasOwnProperty(param)) {
-        res.status(400).json({ error: `Missing required parameter: ${param}` });
-        return;
+        next(new BadRequestError(`Missing required parameter: ${param}`));
       }
     }
     next();

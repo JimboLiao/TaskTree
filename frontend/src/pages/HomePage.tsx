@@ -12,20 +12,8 @@ const StyledContainer = styled("div")({
 });
 
 const HomePage = () => {
+  // 0 for no modal, 1 for login modal, 2 for signup modal
   const [showModal, setShowModal] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  function handleModalClose() {
-    setShowModal(0);
-  }
-
-  function handleLogin() {
-    setShowModal(1);
-  }
-
-  function handleSignup() {
-    setShowModal(2);
-  }
 
   let modalContent = null;
   if (showModal === 1) {
@@ -40,7 +28,7 @@ const HomePage = () => {
 
   return (
     <>
-      <AppHeader onLogin={handleLogin} isLoggedIn={isLoggedIn} />
+      <AppHeader onLogin={handleLogin} />
       <StyledContainer>
         <Jumbotron onSignup={handleSignup} />
       </StyledContainer>
@@ -48,6 +36,18 @@ const HomePage = () => {
       <AppFooter />
     </>
   );
+
+  function handleModalClose() {
+    setShowModal(0);
+  }
+
+  function handleLogin() {
+    setShowModal(1);
+  }
+
+  function handleSignup() {
+    setShowModal(2);
+  }
 };
 
 export default HomePage;

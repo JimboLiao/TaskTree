@@ -1,16 +1,10 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Stack,
-  TextField,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Box, Button, Divider, Typography, styled } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import ModalLogo from "./ModalLogo";
+import { useUserContext } from "../contexts/UserContext";
+import LoginSignupForm from "./LoginSignupForm";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -31,12 +25,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
   isOpen = true,
   onCreateAccount,
 }) => {
+  const { login } = useUserContext();
   const navigate = useNavigate();
-  function handleLogin() {
-    //@todo login
-    console.log("login");
-    navigate("/");
-  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -74,48 +64,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </Typography>
           <Divider />
         </Box>
-        <Box
-          component="form"
-          display="flex"
-          flexDirection="column"
-          width="100%"
-          sx={{ paddingBottom: "20px" }}
-        >
-          <Stack spacing={1}>
-            <TextField
-              required
-              id="email"
-              label="E-mail"
-              type="email"
-              InputProps={{
-                style: {
-                  borderRadius: "25px",
-                  height: "50px",
-                  width: "100%",
-                },
-              }}
-            />
-
-            <TextField
-              required
-              id="password"
-              label="Password"
-              type="password"
-              InputProps={{
-                style: { borderRadius: "25px", height: "50px" },
-              }}
-            />
-          </Stack>
-        </Box>
-        <Box paddingBottom="20px">
-          <Button
-            onClick={handleLogin}
-            variant="contained"
-            sx={{ bgcolor: "#027929", width: "100%" }}
-          >
-            login
-          </Button>
-        </Box>
+        <LoginSignupForm buttonText="login" onButton={handleLogin} />
         <Typography style={{ cursor: "pointer", textDecoration: "underline" }}>
           Forget password?
         </Typography>
@@ -137,6 +86,17 @@ const LoginModal: React.FC<LoginModalProps> = ({
       </StyledContainer>
     </Modal>
   );
+
+  function handleLogin(email: string, password: string) {
+    login(email, password)
+      .then(() => {
+        navigate("/workspace/dayview");
+      })
+      .catch((err) => {
+        console.error(err);
+        onClose();
+      });
+  }
 };
 
 export default LoginModal;

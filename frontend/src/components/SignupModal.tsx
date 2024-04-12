@@ -1,13 +1,8 @@
-import {
-  Box,
-  Button,
-  Stack,
-  TextField,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Box, Typography, styled } from "@mui/material";
 import Modal from "./Modal";
 import ModalLogo from "./ModalLogo";
+import { useUserContext } from "../contexts/UserContext";
+import LoginSignupForm from "./LoginSignupForm";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -28,10 +23,8 @@ const SignupModal: React.FC<SignupModalProps> = ({
   isOpen = true,
   onLogin,
 }) => {
-  //@todo sign up btn
-  function handleSignup() {
-    console.log("sign up");
-  }
+  const { signup } = useUserContext();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <StyledContainer>
@@ -47,48 +40,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             Welcome! Sign up with your E-mail:
           </Typography>
         </Box>
-        <Box
-          component="form"
-          display="flex"
-          flexDirection="column"
-          width="100%"
-          sx={{ paddingBottom: "20px" }}
-        >
-          <Stack spacing={1}>
-            <TextField
-              required
-              id="email"
-              label="E-mail"
-              type="email"
-              InputProps={{
-                style: {
-                  borderRadius: "25px",
-                  height: "50px",
-                  width: "100%",
-                },
-              }}
-            />
-
-            <TextField
-              required
-              id="password"
-              label="Password"
-              type="password"
-              InputProps={{
-                style: { borderRadius: "25px", height: "50px" },
-              }}
-            />
-          </Stack>
-        </Box>
-        <Box paddingBottom="20px">
-          <Button
-            onClick={handleSignup}
-            variant="contained"
-            sx={{ bgcolor: "#027929", width: "100%" }}
-          >
-            Sign up
-          </Button>
-        </Box>
+        <LoginSignupForm buttonText="sign up" onButton={handleSignup} />
         <Box
           display="flex"
           alignItems="baseline"
@@ -106,6 +58,17 @@ const SignupModal: React.FC<SignupModalProps> = ({
       </StyledContainer>
     </Modal>
   );
+
+  function handleSignup(email: string, password: string) {
+    signup(email, password)
+      .then(() => {
+        alert("Sigup successful!");
+        onClose();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
 };
 
 export default SignupModal;
