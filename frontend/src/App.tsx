@@ -10,6 +10,7 @@ import WorkspaceRoot from "./components/WorkspaceRoot";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { UserProvider } from "./contexts/UserContext";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const router = createBrowserRouter([
@@ -36,6 +37,11 @@ function App() {
           element: <CalendarViewPage />,
         },
       ],
+    },
+    {
+      path: "/profile",
+      element: <ProfilePage />,
+      errorElement: <ErrorPage />,
     },
   ]);
 
