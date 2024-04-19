@@ -35,6 +35,7 @@ const MemberBtn: React.FC = () => {
         }}
       >
         <MenuItem onClick={handleProfile}>Profile</MenuItem>
+        <MenuItem onClick={handleWorkspace}>Workspace</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>
@@ -52,6 +53,9 @@ const MemberBtn: React.FC = () => {
   }
   function handleProfile() {
     navigate("/profile");
+  }
+  function handleWorkspace() {
+    navigate("/workspace/dayview");
   }
 };
 
