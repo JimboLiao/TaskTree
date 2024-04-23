@@ -2,19 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import * as userEntity from "../entities/users";
 import * as tokenEntity from "../entities/token";
 import signJWT from "../utils/signJWT";
-import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto";
-import dotenv from "dotenv";
 import { UnauthorizedError } from "../utils/errors/customErrors";
-dotenv.config();
-const { GOOGLE_CLIENT_ID, GOOGLE_SECRET_KEY, GOOGLE_REDIRECT_URL } =
-  process.env;
-
-const googleOAuthClient = new OAuth2Client({
-  clientId: GOOGLE_CLIENT_ID,
-  clientSecret: GOOGLE_SECRET_KEY,
-  redirectUri: GOOGLE_REDIRECT_URL,
-});
+import { googleOAuthClient } from "../google/googleAPI";
 
 interface UserInfoData {
   sub: string;
@@ -154,7 +144,9 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
     res
       .status(200)
       .json({ status: "success", message: "Logged out successfully" });
-  } catch (err) {}
+  } catch (err) {
+    next(err);
+  }
 };
 
 export { signup, login, getUser, googleLogin, googleCallback, logout };
