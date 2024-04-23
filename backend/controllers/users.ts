@@ -79,6 +79,7 @@ const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
       scope: [
         "https://www.googleapis.com/auth/userinfo.profile",
         "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/calendar",
       ],
     });
 
@@ -113,7 +114,8 @@ const googleCallback = async (
     const email = userInfo.data.email;
     let user = await userEntity.getUserByEmail(email);
     if (!user) {
-      user = await userEntity.createUser({ email });
+      const refreshToken = tokens.refresh_token || undefined;
+      user = await userEntity.createUser({ email, refreshToken });
     }
 
     const jwt = signJWT(user.id);

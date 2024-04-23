@@ -11,14 +11,17 @@ interface User {
   username: string | null;
   createTime: Date;
   updateTime: Date;
+  refreshToken: string | null;
 }
 
 const createUser = async ({
   email,
   password,
+  refreshToken,
 }: {
   email: string;
   password?: string;
+  refreshToken?: string;
 }): Promise<User> => {
   let hashpassword = null;
   if (password) hashpassword = await bcrypt.hash(password, SALTROUND);
@@ -29,6 +32,7 @@ const createUser = async ({
       password: hashpassword,
       createTime: date,
       updateTime: date,
+      refreshToken: refreshToken,
     },
   });
   return user;
@@ -91,4 +95,40 @@ const getUserByEmail = async (email: string) => {
   return user;
 };
 
-export { createUser, loginUser, getUserById, getUserByEmail };
+const getRefreshTokenByUserId = async (id: number) => {
+  const user = await prisma.user.findUnique({
+    where: { id: id },
+    select: {
+      refreshToken: true,
+    },
+  });
+
+  return user?.refreshToken;
+};
+
+const updateRefreshToken = async (id: number, refreshToken: string) => {
+  const user = await prisma.user.update({
+    where: { id: id },
+    data: {
+      refreshToken: refreshToken,
+    },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      createTime: true,
+      updateTime: true,
+    },
+  });
+
+  return user;
+};
+
+export {
+  createUser,
+  loginUser,
+  getUserById,
+  getUserByEmail,
+  getRefreshTokenByUserId,
+  updateRefreshToken,
+};
