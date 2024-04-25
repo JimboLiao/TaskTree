@@ -115,7 +115,12 @@ const googleCallback = async (
     let user = await userEntity.getUserByEmail(email);
     if (!user) {
       const refreshToken = tokens.refresh_token || undefined;
-      user = await userEntity.createUser({ email, refreshToken });
+      user = await userEntity.createUser({ email });
+    }
+
+    // update refresh token if there is one
+    if (tokens.refresh_token) {
+      await userEntity.updateRefreshToken(user.id, tokens.refresh_token);
     }
 
     const jwt = signJWT(user.id);
