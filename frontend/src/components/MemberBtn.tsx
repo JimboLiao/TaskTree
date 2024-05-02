@@ -36,6 +36,8 @@ const MemberBtn: React.FC = () => {
       >
         <MenuItem onClick={handleProfile}>Profile</MenuItem>
         <MenuItem onClick={handleWorkspace}>Workspace</MenuItem>
+        <MenuItem onClick={handleSync}>Sync to Google Calendar</MenuItem>
+        <MenuItem onClick={handleImport}>Import from Google Calendar</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>
@@ -56,6 +58,12 @@ const MemberBtn: React.FC = () => {
   }
   function handleWorkspace() {
     navigate("/workspace/dayview");
+  }
+  function handleSync() {
+    // @todo sync data to google calendar
+  }
+  function handleImport() {
+    // @todo import data from google calendar
   }
 };
 

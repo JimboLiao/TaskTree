@@ -23,9 +23,21 @@ const CalendarViewPage = () => {
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           headerToolbar={{
-            left: "prev,next today",
+            left: "prev,next today sync import",
             center: "title",
             right: "dayGridMonth,timeGridWeek,timeGridDay",
+          }}
+          customButtons={{
+            sync: {
+              text: "Sync",
+              click: handleSync,
+              hint: "Sync data to Google Calendar",
+            },
+            import: {
+              text: "Import",
+              click: handleImport,
+              hint: "Import data from Google Calendar",
+            },
           }}
           height="100%"
           initialView="dayGridMonth"
@@ -33,6 +45,13 @@ const CalendarViewPage = () => {
       </Box>
     </StyledContainer>
   );
+
+  function handleSync() {
+    // @todo sync data to google calendar
+  }
+  function handleImport() {
+    // @todo import data from google calendar
+  }
 };
 
 export default CalendarViewPage;
