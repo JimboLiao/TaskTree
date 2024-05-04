@@ -19,12 +19,66 @@ model User {
   password     String?  @db.VarChar(255)
   username     String?  @db.VarChar(45)
   createTime   DateTime @map("create_time") @db.Timestamp()
-  updateTime   DateTime @map("update_time") @db.Timestamp()
+  updateTime   DateTime @updatedAt @map("update_time") @db.Timestamp()
   refreshToken String?  @map("refresh_token") @db.VarChar(255)
+  // relations
+  taskList     Task[]
 }
 
 model Token {
   id         Int      @id @default(autoincrement())
   token      String   @unique @db.VarChar(255)
   createTime DateTime @map("create_time") @db.Timestamp()
+}
+
+model Task {
+  id           Int            @id @default(autoincrement())
+  title        String?        @db.VarChar(45)
+  start        DateTime
+  end          DateTime
+  description  String?        @db.VarChar(255)
+  isAllDay     Boolean        @default(true) @map("is_all_day")
+  status       TaskStatus     @default(TODO)
+  importance   TaskImportance @default(NORMAL)
+  reminder     DateTime?
+  parentTaskId Int?           @map("parent_task_id")
+  location     String?        @db.VarChar(255)
+  updateTime   DateTime       @updatedAt @map("update_time") @db.Timestamp()
+  createTime   DateTime       @map("create_time") @db.Timestamp()
+  // google event id
+  gEventId     String?        @map("g_event_id") @db.VarChar(255)
+  // relations
+  category     Category       @relation(fields: [categoryId], references: [id])
+  categoryId   Int            @map("category_id")
+  resources    Resource[]
+  attendee     User[]
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(45)
+  // google calendar id
+  gCalendarId String? @map("g_calendar_id") @db.VarChar(255)
+  // relations
+  tasks       Task[]
+}
+
+model Resource {
+  id      Int    @id @default(autoincrement())
+  content String @db.VarChar(255)
+  // relations
+  task    Task   @relation(fields: [taskId], references: [id])
+  taskId  Int    @map("task_id")
+}
+
+enum TaskStatus {
+  TODO
+  DOING
+  DONE
+}
+
+enum TaskImportance {
+  HIGH
+  NORMAL
+  LOW
 }

@@ -14,6 +14,7 @@ async function main() {
 
   // delete all data
   await prisma.user.deleteMany();
+  await prisma.token.deleteMany();
 
   const hashpassword = await bcrypt.hash(dummyUser.password, 10);
   const date = new Date();
@@ -23,13 +24,6 @@ async function main() {
       password: hashpassword,
       createTime: date,
       updateTime: date,
-    },
-  });
-
-  await prisma.token.create({
-    data: {
-      token: "test",
-      createTime: date,
     },
   });
 }
