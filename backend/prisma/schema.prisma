@@ -23,6 +23,7 @@ model User {
   refreshToken String?  @map("refresh_token") @db.VarChar(255)
   // relations
   taskList     Task[]
+  categoryList Category[]
 }
 
 model Token {
@@ -48,8 +49,7 @@ model Task {
   // google event id
   gEventId     String?        @map("g_event_id") @db.VarChar(255)
   // relations
-  category     Category       @relation(fields: [categoryId], references: [id])
-  categoryId   Int            @map("category_id")
+  category     Category[]
   resources    Resource[]
   attendee     User[]
 }
@@ -61,6 +61,7 @@ model Category {
   gCalendarId String? @map("g_calendar_id") @db.VarChar(255)
   // relations
   tasks       Task[]
+  users       User[]
 }
 
 model Resource {
