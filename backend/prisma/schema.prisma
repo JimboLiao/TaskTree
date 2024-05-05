@@ -40,7 +40,7 @@ model Task {
   isAllDay     Boolean        @default(true) @map("is_all_day")
   status       TaskStatus     @default(TODO)
   importance   TaskImportance @default(NORMAL)
-  reminder     DateTime?
+  reminder     Int?
   parentTaskId Int?           @map("parent_task_id")
   location     String?        @db.VarChar(255)
   updateTime   DateTime       @updatedAt @map("update_time") @db.Timestamp()
