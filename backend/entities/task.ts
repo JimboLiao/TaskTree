@@ -35,8 +35,8 @@ const createTask = async ({
       createTime: date,
       updateTime: date,
       attendee: {
-        connect: {
-          id: userId,
+        create: {
+          userId: userId,
         },
       },
       category: {
@@ -51,7 +51,7 @@ const createTask = async ({
       },
     },
     include: {
-      attendee: { select: { id: true } },
+      attendee: { select: { userId: true } },
       category: true,
       resources: true,
     },
@@ -78,7 +78,7 @@ const getTasksInRange = async ({
       },
       attendee: {
         some: {
-          id: userId,
+          userId: userId,
         },
       },
     },
@@ -96,7 +96,7 @@ const getAllTasks = async (userId: number) => {
     where: {
       attendee: {
         some: {
-          id: userId,
+          userId: userId,
         },
       },
     },
@@ -110,7 +110,12 @@ const getTaskById = async (taskId: number) => {
       id: taskId,
     },
     include: {
-      attendee: { select: { id: true } },
+      attendee: {
+        include: {
+          user: { select: { id: true, username: true, email: true } },
+        },
+      },
+      category: true,
     },
   });
 
@@ -131,7 +136,7 @@ const updateTask = async ({
       id: taskId,
       attendee: {
         some: {
-          id: userId,
+          userId: userId,
         },
       },
     },

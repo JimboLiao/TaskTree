@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as resourceEntity from "../entities/resource";
 import * as taskEntity from "../entities/task";
-import { ForbiddenError } from "../utils/errors/customErrors";
+import { ForbiddenError, NotFoundError } from "../utils/errors/customErrors";
 
 const createResource = async (
   req: Request,
@@ -12,10 +12,19 @@ const createResource = async (
     const userId = res.locals.id;
     const taskId = parseInt(req.params.taskId, 10);
 
-    // check if task's attendee includes current user
     const task = await taskEntity.getTaskById(taskId);
-    if (task?.attendee.includes({ id: userId })) {
-      throw new ForbiddenError("Forbidden");
+    if (!task) {
+      throw new NotFoundError("Task not found");
+    }
+
+    // check if task's attendee includes current user
+    for (let i = 0; i < task.attendee.length; i++) {
+      if (task.attendee[i].userId === userId) {
+        break;
+      }
+      if (i === task.attendee.length - 1) {
+        throw new ForbiddenError("Forbidden");
+      }
     }
 
     // create resource

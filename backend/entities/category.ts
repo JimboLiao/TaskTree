@@ -13,14 +13,14 @@ const createCategory = async ({
   const newCategory = await prisma.category.create({
     data: {
       ...category,
-      users: {
+      user: {
         connect: {
           id: userId,
         },
       },
     },
     include: {
-      users: { select: { id: true } },
+      user: { select: { id: true } },
     },
   });
   return newCategory;
@@ -29,11 +29,7 @@ const createCategory = async ({
 const getCategories = async (userId: number) => {
   const categories = await prisma.category.findMany({
     where: {
-      users: {
-        some: {
-          id: userId,
-        },
-      },
+      userId: userId,
     },
   });
   return categories;
@@ -49,11 +45,7 @@ const updateCategory = async ({
   const newCategory = await prisma.category.update({
     where: {
       id: category.id,
-      users: {
-        some: {
-          id: userId,
-        },
-      },
+      userId: userId,
     },
     data: {
       name: category.name,
