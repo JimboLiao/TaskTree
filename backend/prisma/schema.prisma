@@ -22,7 +22,7 @@ model User {
   updateTime   DateTime @updatedAt @map("update_time") @db.Timestamp()
   refreshToken String?  @map("refresh_token") @db.VarChar(255)
   // relations
-  taskList     Task[]
+  taskList     TaskOfUser[]
   categoryList Category[]
 }
 
@@ -46,12 +46,21 @@ model Task {
   location     String?        @db.VarChar(255)
   updateTime   DateTime       @updatedAt @map("update_time") @db.Timestamp()
   createTime   DateTime       @map("create_time") @db.Timestamp()
-  // google event id
-  gEventId     String?        @map("g_event_id") @db.VarChar(255)
   // relations
   category     Category[]
   resources    Resource[]
-  attendee     User[]
+  attendee     TaskOfUser[]
+}
+
+model TaskOfUser {
+  id          Int            @id @default(autoincrement())
+  // google event id
+  gEventId     String?        @map("g_event_id") @db.VarChar(255)
+  // relations
+  user         User           @relation(fields: [userId], references: [id])
+  userId       Int            @map("user_id")
+  task         Task           @relation(fields: [taskId], references: [id])
+  taskId       Int            @map("task_id")
 }
 
 model Category {
@@ -61,7 +70,8 @@ model Category {
   gCalendarId String? @map("g_calendar_id") @db.VarChar(255)
   // relations
   tasks       Task[]
-  users       User[]
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int     @map("user_id")
 }
 
 model Resource {
