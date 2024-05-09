@@ -1,7 +1,7 @@
 import prisma from "./prismaClient";
 
-type TaskStatus = "TODO" | "DOING" | "DONE";
-type TaskImportance = "LOW" | "NORMAL" | "HIGH";
+export type TaskStatus = "TODO" | "DOING" | "DONE";
+export type TaskImportance = "LOW" | "NORMAL" | "HIGH";
 
 interface CreateTask {
   title?: string | null;
@@ -83,7 +83,6 @@ const getTasksInRange = async ({
       },
     },
     include: {
-      attendee: { select: { id: true } },
       category: true,
       resources: true,
     },
@@ -91,13 +90,30 @@ const getTasksInRange = async ({
   return tasks;
 };
 
-const getAllTasks = async (userId: number) => {
+const getAllTasks = async (
+  userId: number,
+  isIncludeGoogleId: boolean = false
+) => {
   const tasks = await prisma.task.findMany({
     where: {
       attendee: {
         some: {
           userId: userId,
         },
+      },
+    },
+    include: {
+      category: {
+        where: { userId: userId },
+        select: {
+          id: true,
+          name: true,
+          gCalendarId: isIncludeGoogleId,
+        },
+      },
+      attendee: {
+        where: { userId: userId },
+        select: { gEventId: isIncludeGoogleId, id: true },
       },
     },
   });
