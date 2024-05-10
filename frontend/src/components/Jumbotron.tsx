@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import logoImg from "../assets/logo-1.png";
+import LoginSignupModalToggle from "./LoginSignupModalToggle";
 
 const StyledJumbotron = styled("div")({
   display: "flex",
@@ -19,10 +20,9 @@ const BackgroundImage = styled("div")({
   width: "100%",
 });
 
-interface JumbotronProps {
-  onSignup: () => void;
-}
-const Jumbotron: React.FC<JumbotronProps> = ({ onSignup }) => {
+const Jumbotron: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
     <StyledJumbotron>
       <Box
@@ -41,10 +41,15 @@ const Jumbotron: React.FC<JumbotronProps> = ({ onSignup }) => {
           <Button
             variant="contained"
             sx={{ bgcolor: "#56DA02", color: "#fff" }}
-            onClick={onSignup}
+            onClick={handleClick}
           >
             Get Started
           </Button>
+          <LoginSignupModalToggle
+            isOpen={isOpen}
+            onClose={handleClose}
+            initModal="signup"
+          />
         </Box>
       </Box>
       <Box height="500px" width="500px" minWidth="500px">
@@ -52,6 +57,13 @@ const Jumbotron: React.FC<JumbotronProps> = ({ onSignup }) => {
       </Box>
     </StyledJumbotron>
   );
+
+  function handleClick() {
+    setIsOpen(true);
+  }
+  function handleClose() {
+    setIsOpen(false);
+  }
 };
 
 export default Jumbotron;

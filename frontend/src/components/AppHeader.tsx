@@ -1,38 +1,21 @@
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import logo from "../assets/logo-1.png";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
+import MemberBtn from "./MemberBtn";
+import LoginButton from "./LoginButton";
 
-interface AppHeaderProps {
-  onLogin: () => void;
-}
-const AppHeader: React.FC<AppHeaderProps> = ({ onLogin }) => {
+const AppHeader: React.FC = () => {
   let navigate = useNavigate();
   const { user } = useUserContext();
   function handleClickLogo(): void {
     navigate("/");
   }
 
-  const headerButton =
-    user !== undefined ? (
-      <Button
-        color="inherit"
-        onClick={
-          //@todo handle member btn
-          () => console.log("member")
-        }
-      >
-        Member
-      </Button>
-    ) : (
-      <Button color="inherit" onClick={onLogin}>
-        Login
-      </Button>
-    );
+  const headerButton = user !== undefined ? <MemberBtn /> : <LoginButton />;
 
   return (
     <Box sx={{ flexGrow: 1 }}>

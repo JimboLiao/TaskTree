@@ -5,6 +5,7 @@ interface UserContextType {
   user: User | undefined;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
+  logout: () => void;
 }
 
 interface UserProviderProps {
@@ -36,8 +37,15 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  const logout = () => {
+    //remove token
+    document.cookie =
+      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; Secure; SameSite=Strict";
+    setUser(undefined);
+  };
+
   return (
-    <UserContext.Provider value={{ user, login, signup }}>
+    <UserContext.Provider value={{ user, login, signup, logout }}>
       {children}
     </UserContext.Provider>
   );

@@ -16,13 +16,9 @@ const StyledWorkspaceContainer = styled("div")({
 });
 
 const WorkspaceRoot = () => {
-  function handleLogin() {
-    //@todo login function
-    console.log("login");
-  }
   return (
     <>
-      <AppHeader onLogin={handleLogin} />
+      <AppHeader />
       <StyledContainer>
         <StyledWorkspaceContainer>
           <WorkspaceSideBar />
