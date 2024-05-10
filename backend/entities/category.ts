@@ -35,6 +35,15 @@ const getCategories = async (userId: number) => {
   return categories;
 };
 
+const getCategory = async (userId: number, categoryId: number) => {
+  const category = await prisma.category.findUnique({
+    where: {
+      id: categoryId,
+    },
+  });
+  return category;
+};
+
 const updateCategory = async ({
   category,
   userId,
@@ -55,4 +64,4 @@ const updateCategory = async ({
   return newCategory;
 };
 
-export { createCategory, getCategories, updateCategory };
+export { createCategory, getCategories, getCategory, updateCategory };

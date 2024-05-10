@@ -1,5 +1,6 @@
 import { calendar_v3 } from "googleapis";
-import { TaskImportance, TaskStatus } from "../entities/task";
+import { Task } from "../entities/task";
+
 function categoryToCalendar(category: {
   id?: number;
   name?: string;
@@ -9,20 +10,7 @@ function categoryToCalendar(category: {
   return { summary: category.name };
 }
 
-function taskToEvent(task: {
-  id?: number;
-  title?: string | null;
-  start: Date;
-  end: Date;
-  description?: string | null;
-  isAllDay?: boolean;
-  status?: TaskStatus;
-  importance?: TaskImportance;
-  reminder?: number | null;
-  location?: string | null;
-  createTime?: Date;
-  updateTime?: Date;
-}): calendar_v3.Schema$Event {
+function taskToEvent(task: Task): calendar_v3.Schema$Event {
   let start = undefined;
   let end = undefined;
   if (task.isAllDay) {
@@ -53,4 +41,45 @@ function taskToEvent(task: {
   };
 }
 
-export { categoryToCalendar, taskToEvent };
+function eventToTask(event: calendar_v3.Schema$Event): Task {
+  let task: Task = {} as Task;
+
+  task.title = event.summary;
+
+  if (event.start === undefined || event.end === undefined) {
+    throw new Error("Event start or end not found");
+  }
+  // Check if the event is all-day
+  if (event.start.date || event.end.date) {
+    task.isAllDay = true;
+  } else {
+    task.isAllDay = false;
+  }
+  let startTime = event.start.dateTime || event.start.date;
+  let endTime = event.end.dateTime || event.end.date;
+  if (!startTime || !endTime) {
+    throw new Error("Event start or end not found");
+  }
+  task.start = new Date(startTime);
+  task.end = new Date(endTime);
+  task.description = event.description;
+  task.location = event.location;
+
+  // Extract reminder information
+  if (
+    event.reminders &&
+    !event.reminders.useDefault &&
+    event.reminders.overrides
+  ) {
+    let reminder = event.reminders.overrides.find(
+      (override) => override.method === "email"
+    );
+    if (reminder) {
+      task.reminder = reminder.minutes;
+    }
+  }
+
+  return task;
+}
+
+export { categoryToCalendar, taskToEvent, eventToTask };

@@ -5,6 +5,7 @@ import * as categoryEntity from "../entities/category";
 import * as taskOfUserEntity from "../entities/taskOfUser";
 import * as googleAPI from "../google/googleAPI";
 import * as parse from "../utils/parseFunctions";
+import { BadRequestError, NotFoundError } from "../utils/errors/customErrors";
 
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -31,7 +32,9 @@ const getTasksInRange = async (
   try {
     const { start, end } = req.query as { start: string; end: string };
     if (!start || !end) {
-      throw new Error("Missing required query parameters: start and end");
+      throw new BadRequestError(
+        "Missing required query parameters: start and end"
+      );
     }
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -137,9 +140,95 @@ const syncTasksToGoogleCalendar = async (
   }
 };
 
+const importTasksFromGoogle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = res.locals.id;
+    const categoryId = parseInt(req.params.categoryId, 10);
+    const category = await categoryEntity.getCategory(userId, categoryId);
+    if (!category?.gCalendarId) {
+      throw new NotFoundError(
+        "Cannot found calendar corresponding to category"
+      );
+    }
+    const refreshToken = await userEntity.getRefreshTokenByUserId(userId);
+    if (!refreshToken) {
+      throw new NotFoundError("Refresh token not found");
+    }
+
+    const { start, end } = req.query as { start: string; end: string };
+    if (!start || !end) {
+      throw new BadRequestError(
+        "Missing required query parameters: start and end"
+      );
+    }
+
+    const data = await googleAPI.listEvent({
+      refreshToken,
+      calendarId: category.gCalendarId,
+      timeMax: end,
+      timeMin: start,
+    });
+    if (!data) {
+      throw new Error("Failed to get events from google calendar");
+    }
+
+    const events = data.items;
+    if (!events?.length) {
+      return res
+        .status(200)
+        .json({ status: "success", message: "Nothing to import" });
+    }
+
+    const promises = [];
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      const newTask = parse.eventToTask(event);
+      if (!event.id) {
+        throw new Error("Event id is missing");
+      }
+
+      promises.push(
+        taskOfUserEntity
+          .getTaskOfUserByGEventId(event.id)
+          .then((taskOfUser) => {
+            if (!taskOfUser) {
+              promises.push(
+                taskEntity.createTask({
+                  task: newTask,
+                  userId,
+                  categoryId,
+                  gEventId: event.id,
+                })
+              );
+            } else {
+              promises.push(
+                taskEntity.updateTask({
+                  taskId: taskOfUser.taskId,
+                  task: newTask,
+                })
+              );
+            }
+          })
+      );
+    } // for loop
+
+    await Promise.all(promises);
+    return res
+      .status(200)
+      .json({ status: "success", message: "Imported successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export {
   createTask,
   getTasksInRange,
   getAllTasks,
   syncTasksToGoogleCalendar,
+  importTasksFromGoogle,
 };

@@ -55,7 +55,7 @@ model Task {
 model TaskOfUser {
   id          Int            @id @default(autoincrement())
   // google event id
-  gEventId     String?        @map("g_event_id") @db.VarChar(255)
+  gEventId     String?        @map("g_event_id") @db.VarChar(255) @unique
   // relations
   user         User           @relation(fields: [userId], references: [id])
   userId       Int            @map("user_id")
@@ -67,7 +67,7 @@ model Category {
   id          Int     @id @default(autoincrement())
   name        String  @db.VarChar(45)
   // google calendar id
-  gCalendarId String? @map("g_calendar_id") @db.VarChar(255)
+  gCalendarId String? @map("g_calendar_id") @db.VarChar(255) @unique
   // relations
   tasks       Task[]
   user        User    @relation(fields: [userId], references: [id])

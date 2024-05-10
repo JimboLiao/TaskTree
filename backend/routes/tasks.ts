@@ -14,4 +14,10 @@ router.post(
 router.get("/get", authJWT, taskController.getTasksInRange);
 router.get("/getAll", authJWT, taskController.getAllTasks);
 router.post("/syncToGoogle", authJWT, taskController.syncTasksToGoogleCalendar);
+router.post(
+  "/importFromGoogle/:categoryId",
+  authJWT,
+  taskController.importTasksFromGoogle
+);
+
 export default router;

@@ -3,10 +3,10 @@ import prisma from "./prismaClient";
 export type TaskStatus = "TODO" | "DOING" | "DONE";
 export type TaskImportance = "LOW" | "NORMAL" | "HIGH";
 
-interface CreateTask {
+export interface Task {
   title?: string | null;
-  start: Date | string;
-  end: Date | string;
+  start: Date;
+  end: Date;
   description?: string | null;
   isAllDay?: boolean;
   status?: TaskStatus;
@@ -14,7 +14,8 @@ interface CreateTask {
   reminder?: number | null;
   parentTaskId?: number | null;
   location?: string | null;
-  gEventId?: string | null;
+  createTime?: Date;
+  updateTime?: Date;
 }
 
 const createTask = async ({
@@ -22,33 +23,48 @@ const createTask = async ({
   userId,
   categoryId,
   resources,
+  gEventId,
 }: {
-  task: CreateTask;
+  task: Task;
   userId: number;
   categoryId: number;
-  resources: { content: string }[];
+  resources?: { content: string }[];
+  gEventId?: string | null;
 }) => {
   const date = new Date();
+  let res = undefined;
+  if (resources != undefined) {
+    res = {
+      createMany: {
+        data: resources,
+      },
+    };
+  }
+  let att = gEventId
+    ? {
+        create: {
+          userId: userId,
+          gEventId: gEventId,
+        },
+      }
+    : {
+        create: {
+          userId: userId,
+        },
+      };
+
   const newTask = await prisma.task.create({
     data: {
       ...task,
       createTime: date,
       updateTime: date,
-      attendee: {
-        create: {
-          userId: userId,
-        },
-      },
+      attendee: att,
       category: {
         connect: {
           id: categoryId,
         },
       },
-      resources: {
-        createMany: {
-          data: resources,
-        },
-      },
+      resources: res,
     },
     include: {
       attendee: { select: { userId: true } },
@@ -141,23 +157,34 @@ const getTaskById = async (taskId: number) => {
 const updateTask = async ({
   taskId,
   task,
-  userId,
+  taskOfUserId,
+  gEventId,
 }: {
   taskId: number;
-  task: CreateTask;
-  userId: number;
+  task: Task;
+  taskOfUserId?: number;
+  gEventId?: string | null;
 }) => {
+  let att =
+    taskOfUserId && gEventId
+      ? {
+          update: {
+            where: {
+              id: taskOfUserId,
+            },
+            data: {
+              gEventId: gEventId,
+            },
+          },
+        }
+      : undefined;
   const newTask = await prisma.task.update({
     where: {
       id: taskId,
-      attendee: {
-        some: {
-          userId: userId,
-        },
-      },
     },
     data: {
       ...task,
+      attendee: att,
     },
   });
   return newTask;
