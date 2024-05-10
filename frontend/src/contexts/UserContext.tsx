@@ -1,11 +1,20 @@
 import { createContext, useContext, useState } from "react";
-import { User, loginApi, signupApi } from "../api/userAPI";
+import {
+  User,
+  getUserProfileApi,
+  googleLoginApi,
+  loginApi,
+  logoutApi,
+  signupApi,
+} from "../api/userAPI";
 
 interface UserContextType {
   user: User | undefined;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  googleLogin: () => Promise<string>;
+  getUser: () => Promise<void>;
 }
 
 interface UserProviderProps {
@@ -20,11 +29,20 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await loginApi(email, password);
-      document.cookie = `token=${response.token}; path=/; Secure; SameSite=Strict`;
       setUser(response.user);
     } catch (err) {
       console.error(err);
       throw Error("login error");
+    }
+  };
+
+  const googleLogin = async () => {
+    try {
+      const response = await googleLoginApi();
+      return response.url;
+    } catch (err) {
+      console.error(err);
+      throw Error("Google login error");
     }
   };
 
@@ -37,15 +55,28 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    //remove token
-    document.cookie =
-      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; Secure; SameSite=Strict";
-    setUser(undefined);
+  const logout = async () => {
+    try {
+      logoutApi();
+      setUser(undefined);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getUser = async () => {
+    try {
+      const data = await getUserProfileApi();
+      setUser(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
-    <UserContext.Provider value={{ user, login, signup, logout }}>
+    <UserContext.Provider
+      value={{ user, login, signup, logout, googleLogin, getUser }}
+    >
       {children}
     </UserContext.Provider>
   );

@@ -1,4 +1,5 @@
-import { Box, Typography, styled } from "@mui/material";
+import { Box, Button, Divider, Typography, styled } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
 import Modal from "./Modal";
 import ModalLogo from "./ModalLogo";
 import { useUserContext } from "../contexts/UserContext";
@@ -23,7 +24,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
   isOpen = true,
   onLogin,
 }) => {
-  const { signup } = useUserContext();
+  const { signup, googleLogin } = useUserContext();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -37,8 +38,30 @@ const SignupModal: React.FC<SignupModalProps> = ({
         >
           <Typography fontSize="32px">Sign up</Typography>
           <Typography fontSize="16px">
-            Welcome! Sign up with your E-mail:
+            Welcome! Select a method to sign up:
           </Typography>
+        </Box>
+        <Box display="flex" padding="0px 10px 30px 10px" justifyItems="center">
+          <Button
+            variant="outlined"
+            startIcon={<GoogleIcon sx={{ color: "#DB4437" }} />}
+            sx={{ color: "black", border: "1px solid #DB4437" }}
+            onClick={handleGoogleSignUp}
+          >
+            Sign up with Google
+          </Button>
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyItems="center"
+          padding="0px 10px 30px 10px"
+          width="100%"
+        >
+          <Typography fontSize="14px" color="#A5A5A5" textAlign="center">
+            or continue with E-mail
+          </Typography>
+          <Divider />
         </Box>
         <LoginSignupForm buttonText="sign up" onButton={handleSignup} />
         <Box
@@ -67,6 +90,19 @@ const SignupModal: React.FC<SignupModalProps> = ({
       })
       .catch((err) => {
         console.error(err);
+      });
+  }
+
+  function handleGoogleSignUp() {
+    googleLogin()
+      .then((url) => {
+        // open a new tab
+        const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+        if (newWindow) newWindow.opener = null;
+      })
+      .catch((err) => {
+        console.error(err);
+        onClose();
       });
   }
 };

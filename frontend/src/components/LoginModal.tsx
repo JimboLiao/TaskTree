@@ -25,7 +25,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   isOpen = true,
   onCreateAccount,
 }) => {
-  const { login } = useUserContext();
+  const { login, googleLogin } = useUserContext();
   const navigate = useNavigate();
 
   return (
@@ -48,6 +48,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             variant="outlined"
             startIcon={<GoogleIcon sx={{ color: "#DB4437" }} />}
             sx={{ color: "black", border: "1px solid #DB4437" }}
+            onClick={handleGoogleLogin}
           >
             Login with Google
           </Button>
@@ -91,6 +92,19 @@ const LoginModal: React.FC<LoginModalProps> = ({
     login(email, password)
       .then(() => {
         navigate("/workspace/dayview");
+      })
+      .catch((err) => {
+        console.error(err);
+        onClose();
+      });
+  }
+
+  function handleGoogleLogin() {
+    googleLogin()
+      .then((url) => {
+        // open a new tab
+        const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+        if (newWindow) newWindow.opener = null;
       })
       .catch((err) => {
         console.error(err);

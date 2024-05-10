@@ -25,6 +25,13 @@ async function main() {
       updateTime: date,
     },
   });
+
+  await prisma.token.create({
+    data: {
+      token: "test",
+      createTime: date,
+    },
+  });
 }
 
 main()

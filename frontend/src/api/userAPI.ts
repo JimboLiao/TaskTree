@@ -19,10 +19,14 @@ async function loginApi(
   email: string,
   password: string
 ): Promise<LoginResponse> {
-  const response = await axios.post(`${userApiUrl}/login`, {
-    email: email,
-    password: password,
-  });
+  const response = await axios.post(
+    `${userApiUrl}/login`,
+    {
+      email: email,
+      password: password,
+    },
+    { withCredentials: true }
+  );
 
   return response.data;
 }
@@ -36,4 +40,23 @@ async function signupApi(email: string, password: string) {
   return response.data;
 }
 
-export { loginApi, signupApi };
+async function googleLoginApi(): Promise<{ url: string }> {
+  const response = await axios.post(`${userApiUrl}/googleLogin`);
+  return response.data;
+}
+
+async function getUserProfileApi() {
+  const response = await axios.get(`${userApiUrl}/`, {
+    withCredentials: true, // include cookies in request
+  });
+
+  return response.data;
+}
+
+async function logoutApi() {
+  await axios.post(`${userApiUrl}/logout`, undefined, {
+    withCredentials: true,
+  });
+}
+
+export { loginApi, signupApi, googleLoginApi, getUserProfileApi, logoutApi };
