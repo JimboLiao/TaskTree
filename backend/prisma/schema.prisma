@@ -66,6 +66,7 @@ model TaskOfUser {
 model Category {
   id          Int     @id @default(autoincrement())
   name        String  @db.VarChar(45)
+  color       String  @default("#207C00") @db.VarChar(45)
   // google calendar id
   gCalendarId String? @map("g_calendar_id") @db.VarChar(255) @unique
   // relations

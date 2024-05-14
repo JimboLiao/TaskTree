@@ -68,7 +68,7 @@ const createTask = async ({
     },
     include: {
       attendee: { select: { userId: true } },
-      category: true,
+      category: { select: { id: true, name: true, color: true } },
       resources: true,
     },
   });
@@ -99,7 +99,7 @@ const getTasksInRange = async ({
       },
     },
     include: {
-      category: true,
+      category: { select: { id: true, name: true, color: true } },
       resources: true,
     },
   });
@@ -124,6 +124,7 @@ const getAllTasks = async (
         select: {
           id: true,
           name: true,
+          color: true,
           gCalendarId: isIncludeGoogleId,
         },
       },
@@ -147,7 +148,7 @@ const getTaskById = async (taskId: number) => {
           user: { select: { id: true, username: true, email: true } },
         },
       },
-      category: true,
+      category: { select: { id: true, name: true, color: true } },
     },
   });
 

@@ -7,6 +7,7 @@ const createCategory = async ({
   category: {
     name: string;
     gCalendarId?: string;
+    color?: string;
   };
   userId: number;
 }) => {
@@ -19,8 +20,11 @@ const createCategory = async ({
         },
       },
     },
-    include: {
-      user: { select: { id: true } },
+    select: {
+      id: true,
+      name: true,
+      gCalendarId: true,
+      color: true,
     },
   });
   return newCategory;
@@ -48,7 +52,7 @@ const updateCategory = async ({
   category,
   userId,
 }: {
-  category: { id: number; name: string; gCalendarId: string };
+  category: { id: number; name: string; gCalendarId: string; color: string };
   userId: number;
 }) => {
   const newCategory = await prisma.category.update({
@@ -59,6 +63,7 @@ const updateCategory = async ({
     data: {
       name: category.name,
       gCalendarId: category.gCalendarId,
+      color: category.color,
     },
   });
   return newCategory;
