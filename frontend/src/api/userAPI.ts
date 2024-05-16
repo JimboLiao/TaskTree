@@ -10,15 +10,7 @@ export type User = {
   updateTime: string;
 };
 
-export interface LoginResponse {
-  user: User;
-  token: string;
-}
-
-async function loginApi(
-  email: string,
-  password: string
-): Promise<LoginResponse> {
+async function loginApi(email: string, password: string): Promise<User> {
   const response = await axios.post(
     `${userApiUrl}/login`,
     {
@@ -28,7 +20,7 @@ async function loginApi(
     { withCredentials: true }
   );
 
-  return response.data;
+  return response.data.user;
 }
 
 async function signupApi(email: string, password: string) {
@@ -45,12 +37,12 @@ async function googleLoginApi(): Promise<{ url: string }> {
   return response.data;
 }
 
-async function getUserProfileApi() {
+async function getUserProfileApi(): Promise<User> {
   const response = await axios.get(`${userApiUrl}/`, {
     withCredentials: true, // include cookies in request
   });
 
-  return response.data;
+  return response.data.user;
 }
 
 async function logoutApi() {
