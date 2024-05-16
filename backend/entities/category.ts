@@ -35,6 +35,12 @@ const getCategories = async (userId: number) => {
     where: {
       userId: userId,
     },
+    select: {
+      id: true,
+      name: true,
+      gCalendarId: true,
+      color: true,
+    },
   });
   return categories;
 };
