@@ -14,7 +14,6 @@ async function getCategoriesApi() {
     withCredentials: true,
   });
 
-  console.log("getCategoriesApi return data: ", response.data.categories);
   return response.data.categories;
 }
 
@@ -30,7 +29,6 @@ async function createCategoryApi(name: string, color?: string) {
     { withCredentials: true }
   );
 
-  console.log("createCategoryApi return data: ", response.data.data);
   return response.data.data;
 }
 

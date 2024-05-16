@@ -41,7 +41,6 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   }
 
   function handleAddCategory() {
-    console.log("add category");
     createCategoryApi(name).then((category) => {
       if (!category) {
         throw new Error("fail to create category");
