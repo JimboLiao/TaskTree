@@ -18,13 +18,11 @@ const createResource = async (
     }
 
     // check if task's attendee includes current user
-    for (let i = 0; i < task.attendee.length; i++) {
-      if (task.attendee[i].userId === userId) {
-        break;
-      }
-      if (i === task.attendee.length - 1) {
-        throw new ForbiddenError("Forbidden");
-      }
+    const isAttendee = task.attendee.some(
+      (attendee) => attendee.user.id === userId
+    );
+    if (!isAttendee) {
+      throw new ForbiddenError("Forbidden");
     }
 
     // create resource
