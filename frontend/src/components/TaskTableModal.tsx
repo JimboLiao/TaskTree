@@ -23,15 +23,15 @@ import {
 } from "@mui/icons-material";
 
 import Modal from "./Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskSelector from "./TaskSelector";
-import { TaskImportance, TaskStatus } from "../data/data";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import ItemList from "./ItemList";
 import DataEntry from "./DataEntry";
 import ChatHistory from "./ChatHistory";
 import RemindSelector from "./RemindSelector";
+import { getTaskDetailApi, TaskImportance, TaskStatus } from "../api/taskAPI";
 
 const StyledContainer = styled("div")(({ color }) => ({
   maxWidth: "756px",
@@ -67,18 +67,49 @@ const StyledData = styled(Box)({
 interface TaskTableModalProps {
   onModalClose: () => void;
   isModalOpen: boolean;
+  taskId: number | null;
 }
 const TaskTableModal: React.FC<TaskTableModalProps> = ({
   onModalClose,
   isModalOpen,
+  taskId,
 }) => {
-  const [taskSummary, setTaskSummary] = useState("task");
+  useEffect(() => {
+    async function fetchTaskDetailAndInitialize() {
+      try {
+        if (!taskId) return;
+        const t = await getTaskDetailApi(taskId);
+
+        setTaskTitle(t.title);
+        setCategory(t.categoryName);
+        setStatus(t.status);
+        setImportance(t.importance);
+        setIsAllDay(t.isAllDay);
+        setStartDate(dayjs(t.start));
+        setEndDate(dayjs(t.end));
+        setStartTime(dayjs(t.start));
+        setEndTime(dayjs(t.end));
+        setLocation(t.location);
+        setIsReminder(t.reminder != 0);
+        setReminderTime(t.reminder);
+        setAttendees(t.attendees.map((a) => a.email));
+        setResources(t.resources.map((r) => r.content));
+        setNotes(t.description);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchTaskDetailAndInitialize();
+  }, [taskId]);
+
+  const [taskTitle, setTaskTitle] = useState("Loading ...");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState<TaskStatus>(TaskStatus.TODO);
   const [importance, setImportance] = useState<TaskImportance>(
     TaskImportance.NORMAL
   );
-  const [isAllday, setIsAllday] = useState(true);
+  const [isAllDay, setIsAllDay] = useState(true);
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
   const [startTime, setStartTime] = useState<Dayjs | null>(dayjs());
@@ -88,25 +119,21 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
   const [reminderTime, setReminderTime] = useState(10);
   const [attendees, setAttendees] = useState(["test@email.com"]);
   const [newAttendee, setNewAttendee] = useState("");
+  //@todo subtask feature
   const [subtasks, setSubtasks] = useState(["taskname"]);
   const [newSubtask, setNewSubtask] = useState("");
   const [resources, setResources] = useState(["resource 1"]);
   const [newResource, setNewResource] = useState("");
   const [notes, setNotes] = useState("old notes");
+  //@todo messages feature
   const [messages, setMessages] = useState([
     { username: "user1", content: "message content" },
     { username: "user1", content: "message content" },
-    {
-      username: "user1",
-      content:
-        "message content message content message content message content message content message content message content message content message content message content ",
-    },
   ]);
   const [newMessage, setNewMessage] = useState("");
-
   return (
     <>
-      <Modal onClose={onModalClose} isOpen={isModalOpen}>
+      <Modal onClose={handleClose} isOpen={isModalOpen}>
         <StyledContainer color="#1983FF">
           {/* Task name */}
           <StyledRow>
@@ -120,8 +147,8 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
                   fullWidth
                   disableUnderline
                   multiline
-                  value={taskSummary}
-                  onChange={handleChangeTaskSummary}
+                  value={taskTitle}
+                  onChange={handleChangeTaskTitle}
                 />
               </StyledData>
               <StyledData>
@@ -154,7 +181,7 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
                           paddingTop: "0px",
                           paddingBottom: "0px",
                         }}
-                        value={isAllday}
+                        value={isAllDay}
                         onChange={handleChangeAllday}
                       />
                     }
@@ -170,7 +197,7 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
                   sx={{ paddingRight: "8px", width: "160px" }}
                   slotProps={{ field: { size: "small" } }}
                 />
-                {isAllday && (
+                {isAllDay && (
                   <DatePicker
                     label="End Date"
                     value={endDate}
@@ -181,7 +208,7 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
                 )}
               </StyledData>
 
-              {!isAllday && (
+              {!isAllDay && (
                 <>
                   <StyledData>
                     <TimePicker
@@ -379,8 +406,8 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
     </>
   );
 
-  function handleChangeTaskSummary(event: React.ChangeEvent<HTMLInputElement>) {
-    setTaskSummary(event.target.value);
+  function handleChangeTaskTitle(event: React.ChangeEvent<HTMLInputElement>) {
+    setTaskTitle(event.target.value);
   }
   function handleChangeCategory(event: SelectChangeEvent) {
     setCategory(event.target.value);
@@ -392,7 +419,7 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
     setImportance(event.target.value as TaskImportance);
   }
   function handleChangeAllday(event: React.ChangeEvent<HTMLInputElement>) {
-    setIsAllday(event.target.checked);
+    setIsAllDay(event.target.checked);
   }
   function handleChangeStartDate(newDate: Dayjs | null) {
     setStartDate(newDate);
@@ -456,10 +483,14 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
   }
   function handleSendMessage() {
     if (!newMessage) return;
-
     //@todo user name should be the login member's name
     setMessages([...messages, { username: "user", content: `${newMessage}` }]);
     setNewMessage("");
+  }
+  function handleClose() {
+    //@todo call api to update task
+    //@todo re-fetch the taskinfo
+    onModalClose();
   }
 };
 

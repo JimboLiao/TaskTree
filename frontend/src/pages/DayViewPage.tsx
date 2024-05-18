@@ -4,9 +4,9 @@ import TaskToolbar from "../components/TaskToolbar";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import TimeToolbar from "../components/TimeToolbar";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TaskList from "../components/TaskList";
-import { tasks } from "../data/data";
+import { TaskInfo, getTasksInRangeApi } from "../api/taskAPI";
 
 const StyledContainer = styled("div")({
   height: "100%",
@@ -46,6 +46,19 @@ const DayViewPage = () => {
     year: "numeric",
   });
   const [date, setDate] = useState(formatter.format(new Date()));
+  const [tasks, setTasks] = useState<TaskInfo[]>([]);
+
+  useEffect(() => {
+    async function fetchAndSetTasks() {
+      let d = new Date(date);
+      const start = new Date(d.setHours(0, 0, 0, 0));
+      const end = new Date(d.setDate(d.getDate() + 1));
+      const tasks = await getTasksInRangeApi(start, end);
+      setTasks(tasks);
+    }
+
+    fetchAndSetTasks();
+  }, [date]);
 
   function handleTodaybtn() {
     const calendarApi = calendarRef.current?.getApi();
