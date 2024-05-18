@@ -5,7 +5,11 @@ import * as categoryEntity from "../entities/category";
 import * as taskOfUserEntity from "../entities/taskOfUser";
 import * as googleAPI from "../google/googleAPI";
 import * as parse from "../utils/parseFunctions";
-import { BadRequestError, NotFoundError } from "../utils/errors/customErrors";
+import {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} from "../utils/errors/customErrors";
 
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -55,6 +59,33 @@ const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
     const userId = res.locals.id;
     const tasks = await taskEntity.getAllTasks(userId);
     res.status(200).json({ status: "success", data: tasks });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getTaskDetail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = res.locals.id;
+    const taskId = parseInt(req.params.id, 10);
+    const task = await taskEntity.getTaskById(taskId);
+    if (!task) {
+      throw new NotFoundError("Task not found");
+    }
+
+    // check if task's attendee includes current user
+    const isAttendee = task.attendee.some(
+      (attendee) => attendee.user.id === userId
+    );
+    if (!isAttendee) {
+      throw new ForbiddenError("Forbidden");
+    }
+
+    res.status(200).json({ status: "success", data: task });
   } catch (err) {
     next(err);
   }
@@ -229,6 +260,7 @@ export {
   createTask,
   getTasksInRange,
   getAllTasks,
+  getTaskDetail,
   syncTasksToGoogleCalendar,
   importTasksFromGoogle,
 };

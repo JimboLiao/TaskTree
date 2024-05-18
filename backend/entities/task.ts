@@ -144,11 +144,21 @@ const getTaskById = async (taskId: number) => {
     },
     include: {
       attendee: {
-        include: {
-          user: { select: { id: true, username: true, email: true } },
+        select: {
+          id: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              createTime: true,
+              updateTime: true,
+            },
+          },
         },
       },
       category: { select: { id: true, name: true, color: true } },
+      resources: { select: { id: true, content: true } },
     },
   });
 

@@ -12,6 +12,7 @@ router.post(
   taskController.createTask
 );
 router.get("/get", authJWT, taskController.getTasksInRange);
+router.get("/get/:id", authJWT, taskController.getTaskDetail);
 router.get("/getAll", authJWT, taskController.getAllTasks);
 router.post("/syncToGoogle", authJWT, taskController.syncTasksToGoogleCalendar);
 router.post(
