@@ -49,8 +49,25 @@ const getCategory = async (userId: number, categoryId: number) => {
   const category = await prisma.category.findUnique({
     where: {
       id: categoryId,
+      userId: userId,
     },
   });
+  return category;
+};
+
+const getUncategorized = async (userId: number) => {
+  const category = await prisma.category.findFirst({
+    where: {
+      name: "Uncategorized",
+      userId: userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      color: true,
+    },
+  });
+
   return category;
 };
 
@@ -75,4 +92,10 @@ const updateCategory = async ({
   return newCategory;
 };
 
-export { createCategory, getCategories, getCategory, updateCategory };
+export {
+  createCategory,
+  getCategories,
+  getCategory,
+  getUncategorized,
+  updateCategory,
+};

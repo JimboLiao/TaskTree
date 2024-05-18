@@ -1,3 +1,4 @@
+import { getUncategorized } from "./category";
 import prisma from "./prismaClient";
 
 export type TaskStatus = "TODO" | "DOING" | "DONE";
@@ -32,6 +33,7 @@ const createTask = async ({
   gEventId?: string | null;
 }) => {
   const date = new Date();
+
   let res = undefined;
   if (resources != undefined) {
     res = {
@@ -40,6 +42,7 @@ const createTask = async ({
       },
     };
   }
+
   let att = gEventId
     ? {
         create: {
@@ -53,17 +56,38 @@ const createTask = async ({
         },
       };
 
+  let cate: {
+    create?: { name: string; userId: number };
+    connect?: { id: number };
+  } = {
+    connect: {
+      id: categoryId,
+    },
+  };
+  if (categoryId === -1) {
+    const uncategorized = await getUncategorized(userId);
+    if (!uncategorized) {
+      cate = {
+        create: {
+          name: "Uncategorized",
+          userId: userId,
+        },
+      };
+    } else {
+      cate = {
+        connect: {
+          id: uncategorized.id,
+        },
+      };
+    }
+  }
   const newTask = await prisma.task.create({
     data: {
       ...task,
       createTime: date,
       updateTime: date,
       attendee: att,
-      category: {
-        connect: {
-          id: categoryId,
-        },
-      },
+      category: cate,
       resources: res,
     },
     include: {
