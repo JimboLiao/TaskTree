@@ -1,10 +1,11 @@
 import { Divider, List, styled } from "@mui/material";
 import SideBarItem from "./SideBarItem";
-import { useEffect, useState } from "react";
-import { Category, getCategoriesApi } from "../api/categoryAPI";
+import { useState } from "react";
+import { Category } from "../api/categoryAPI";
 import Modal from "./Modal";
 import CategoryModal from "./CategoryModal";
 import { useNavigate } from "react-router-dom";
+import useCategories from "../hooks/useCategories";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -17,22 +18,9 @@ const StyledContainer = styled("div")({
 });
 
 const WorkspaceSideBar: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { categories, updateCategories } = useCategories();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategoriesApi();
-        setCategories(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   return (
     <>
@@ -74,7 +62,7 @@ const WorkspaceSideBar: React.FC = () => {
     setIsOpen(true);
   }
   function handleAddCategories(newCategory: Category) {
-    setCategories([...categories, newCategory]);
+    updateCategories([...categories, newCategory]);
     setIsOpen(false);
   }
   function handleNavigateToTreeView(id: string) {
