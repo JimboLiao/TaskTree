@@ -6,24 +6,26 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { TaskImportance, TaskStatus } from "../data/data";
+import { TaskImportance, TaskStatus } from "../api/taskAPI";
+import useCategories from "../hooks/useCategories";
 
 interface TaskSelectsProps {
-  category: string;
-  status: TaskStatus;
-  importance: TaskImportance;
+  category?: string;
+  status?: TaskStatus;
+  importance?: TaskImportance;
   onCategory: (event: SelectChangeEvent) => void;
   onStatus: (event: SelectChangeEvent<TaskStatus>) => void;
   onImportance: (event: SelectChangeEvent<TaskImportance>) => void;
 }
 const TaskSelector: React.FC<TaskSelectsProps> = ({
-  category,
-  status,
-  importance,
+  category = "",
+  status = TaskStatus.TODO,
+  importance = TaskImportance.NORMAL,
   onCategory,
   onStatus,
   onImportance,
 }) => {
+  const { categories } = useCategories();
   return (
     <>
       <Box>
@@ -39,8 +41,11 @@ const TaskSelector: React.FC<TaskSelectsProps> = ({
             onChange={onCategory}
             label="Category"
           >
-            {/* @todo category options */}
-            <MenuItem value={10}>Category1</MenuItem>
+            {categories.map((c) => (
+              <MenuItem key={c.id} value={c.name}>
+                {c.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl
