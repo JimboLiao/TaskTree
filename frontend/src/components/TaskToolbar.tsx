@@ -1,6 +1,7 @@
 import { Box, styled } from "@mui/material";
 import { useState } from "react";
 import DataEntry from "./DataEntry";
+import { createTaskApi } from "../api/taskAPI";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -9,10 +10,7 @@ const StyledContainer = styled("div")({
   paddingBottom: "10px",
 });
 
-interface TaskToolbarProps {
-  onAddTask: () => void;
-}
-const TaskToolbar: React.FC<TaskToolbarProps> = ({ onAddTask }) => {
+const TaskToolbar: React.FC = () => {
   const [newTask, setNewTask] = useState("");
 
   return (
@@ -32,7 +30,7 @@ const TaskToolbar: React.FC<TaskToolbarProps> = ({ onAddTask }) => {
           newData={newTask}
           placeholder="New Task..."
           onChangeNewData={handleChangeNewTask}
-          onAddNewData={onAddTask}
+          onAddNewData={handleAddTask}
           disabledCondition={newTask === ""}
         />
       </Box>
@@ -41,6 +39,14 @@ const TaskToolbar: React.FC<TaskToolbarProps> = ({ onAddTask }) => {
 
   function handleChangeNewTask(event: React.ChangeEvent<HTMLInputElement>) {
     setNewTask(event.target.value);
+  }
+
+  function handleAddTask() {
+    const d = new Date();
+    const task = { title: newTask, start: d, end: d, isAllDay: true };
+    createTaskApi(task)
+      .then(() => setNewTask("")) //@todo update task info
+      .catch((err) => console.error(err));
   }
 };
 

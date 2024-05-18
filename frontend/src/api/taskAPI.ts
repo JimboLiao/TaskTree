@@ -108,4 +108,29 @@ async function getTaskDetailApi(id: number) {
   return wrappedData;
 }
 
-export { getTasksInRangeApi, getTaskDetailApi };
+async function createTaskApi(
+  newTask: {
+    title?: string | null;
+    start: Date;
+    end: Date;
+    isAllDay?: boolean;
+    status?: TaskStatus;
+    importance?: TaskImportance;
+  },
+  categoryId: number = -1,
+  resources: { content: string }[] = []
+) {
+  const response = await axios.post(
+    `${taskApiUrl}/`,
+    {
+      task: newTask,
+      categoryId: categoryId,
+      resources: resources,
+    },
+    { withCredentials: true }
+  );
+
+  return response.data.data;
+}
+
+export { getTasksInRangeApi, getTaskDetailApi, createTaskApi };
