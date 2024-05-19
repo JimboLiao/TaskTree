@@ -55,6 +55,27 @@ const getCategory = async (userId: number, categoryId: number) => {
   return category;
 };
 
+const getUnsynchronizedCategories = async (userId: number) => {
+  const categories = await prisma.category.findMany({
+    where: {
+      userId: userId,
+      gCalendarId: null,
+      NOT: {
+        tasks: {
+          none: {},
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      gCalendarId: true,
+      color: true,
+    },
+  });
+  return categories;
+};
+
 const getUncategorized = async (userId: number) => {
   const category = await prisma.category.findFirst({
     where: {
@@ -97,5 +118,6 @@ export {
   getCategories,
   getCategory,
   getUncategorized,
+  getUnsynchronizedCategories,
   updateCategory,
 };

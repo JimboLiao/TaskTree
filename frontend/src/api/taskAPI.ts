@@ -133,4 +133,19 @@ async function createTaskApi(
   return response.data.data;
 }
 
-export { getTasksInRangeApi, getTaskDetailApi, createTaskApi };
+const syncTasksToGoogleCalendar = async () => {
+  const response = await axios.post(
+    `${taskApiUrl}/syncToGoogle`,
+    {},
+    { withCredentials: true }
+  );
+
+  return response.data;
+};
+
+export {
+  getTasksInRangeApi,
+  getTaskDetailApi,
+  createTaskApi,
+  syncTasksToGoogleCalendar,
+};

@@ -2,6 +2,7 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
+import { syncTasksToGoogleCalendar } from "../api/taskAPI";
 
 const MemberBtn: React.FC = () => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -60,7 +61,13 @@ const MemberBtn: React.FC = () => {
     navigate("/workspace/dayview");
   }
   function handleSync() {
-    // @todo sync data to google calendar
+    syncTasksToGoogleCalendar()
+      .then((data) => {
+        alert("Sync successful!");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
   function handleImport() {
     // @todo import data from google calendar
