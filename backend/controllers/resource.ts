@@ -12,17 +12,9 @@ const createResource = async (
     const userId = res.locals.id;
     const taskId = parseInt(req.params.taskId, 10);
 
-    const task = await taskEntity.getTaskById(taskId);
+    const task = await taskEntity.getTaskById(taskId, userId);
     if (!task) {
       throw new NotFoundError("Task not found");
-    }
-
-    // check if task's attendee includes current user
-    const isAttendee = task.attendee.some(
-      (attendee) => attendee.user.id === userId
-    );
-    if (!isAttendee) {
-      throw new ForbiddenError("Forbidden");
     }
 
     // create resource

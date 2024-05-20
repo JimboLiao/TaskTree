@@ -161,10 +161,15 @@ const getAllTasks = async (
   return tasks;
 };
 
-const getTaskById = async (taskId: number) => {
+const getTaskById = async (taskId: number, userId: number) => {
   const task = await prisma.task.findUnique({
     where: {
       id: taskId,
+      attendee: {
+        some: {
+          userId: userId,
+        },
+      },
     },
     include: {
       attendee: {
@@ -181,7 +186,10 @@ const getTaskById = async (taskId: number) => {
           },
         },
       },
-      category: { select: { id: true, name: true, color: true } },
+      category: {
+        where: { userId: userId },
+        select: { id: true, name: true, color: true },
+      },
       resources: { select: { id: true, content: true } },
     },
   });

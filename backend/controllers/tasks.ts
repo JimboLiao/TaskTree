@@ -73,17 +73,9 @@ const getTaskDetail = async (
   try {
     const userId = res.locals.id;
     const taskId = parseInt(req.params.id, 10);
-    const task = await taskEntity.getTaskById(taskId);
+    const task = await taskEntity.getTaskById(taskId, userId);
     if (!task) {
       throw new NotFoundError("Task not found");
-    }
-
-    // check if task's attendee includes current user
-    const isAttendee = task.attendee.some(
-      (attendee) => attendee.user.id === userId
-    );
-    if (!isAttendee) {
-      throw new ForbiddenError("Forbidden");
     }
 
     res.status(200).json({ status: "success", data: task });
@@ -120,8 +112,6 @@ async function syncCategoriesToGoogleCalendars(
   const unsyncCategories = await categoryEntity.getUnsynchronizedCategories(
     userId
   );
-
-  console.log("unsyncCategories", unsyncCategories);
 
   if (unsyncCategories.length > 0) {
     const categoryPromises = unsyncCategories.map((category) =>
@@ -160,7 +150,6 @@ async function syncCategoryToCalendar(
 async function syncTasksToCalendars(userId: number, refreshToken: string) {
   const tasks = await taskEntity.getAllTasks(userId, true);
   const taskPromises = tasks.map((task) => {
-    console.log("task", task);
     const { category, attendee, ...restTask } = task;
     let gCalendarId = category[0].gCalendarId;
     if (!gCalendarId) {
