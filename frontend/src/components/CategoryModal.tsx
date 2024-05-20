@@ -1,6 +1,7 @@
 import { Button, TextField, styled } from "@mui/material";
 import { useState } from "react";
 import { Category, createCategoryApi } from "../api/categoryAPI";
+import Modal from "./Modal";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -11,28 +12,34 @@ const StyledContainer = styled("div")({
 });
 
 interface CategoryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
   onAfterAddCategory: (newCategory: Category) => void;
 }
 
 const CategoryModal: React.FC<CategoryModalProps> = ({
+  isOpen,
+  onClose,
   onAfterAddCategory,
 }) => {
   const [name, setName] = useState<string>("");
   return (
     <>
-      <StyledContainer>
-        <TextField
-          id="name"
-          label="Category name"
-          value={name}
-          onChange={handleNameChange}
-          helperText="Please enter a category name"
-          sx={{ paddingBottom: "20px" }}
-        />
-        <Button variant="contained" onClick={handleAddCategory}>
-          Add
-        </Button>
-      </StyledContainer>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <StyledContainer>
+          <TextField
+            id="name"
+            label="Category name"
+            value={name}
+            onChange={handleNameChange}
+            helperText="Please enter a category name"
+            sx={{ paddingBottom: "20px" }}
+          />
+          <Button variant="contained" onClick={handleAddCategory}>
+            Add
+          </Button>
+        </StyledContainer>
+      </Modal>
     </>
   );
 

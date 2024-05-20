@@ -2,7 +2,6 @@ import { Divider, List, styled } from "@mui/material";
 import SideBarItem from "./SideBarItem";
 import { useState } from "react";
 import { Category } from "../api/categoryAPI";
-import Modal from "./Modal";
 import CategoryModal from "./CategoryModal";
 import { useNavigate } from "react-router-dom";
 import useCategories from "../hooks/useCategories";
@@ -45,16 +44,19 @@ const WorkspaceSideBar: React.FC = () => {
                 key={item.id}
                 text={item.name}
                 color={item.color}
-                onClick={handleNavigateToTreeView(item.id)}
+                onClick={handleNavigateToTreeView(item.id.toString())}
               />
             );
           })}
           <SideBarItem text="Add Category" onClick={handleOpenModal} />
         </List>
       </StyledContainer>
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <CategoryModal onAfterAddCategory={handleAddCategories} />
-      </Modal>
+
+      <CategoryModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onAfterAddCategory={handleAddCategories}
+      />
     </>
   );
 
