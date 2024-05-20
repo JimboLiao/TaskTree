@@ -7,47 +7,29 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { TaskImportance, TaskStatus } from "../api/taskAPI";
-import useCategories from "../hooks/useCategories";
+import CategorySelector from "./CategorySelector";
+import { Category } from "../api/categoryAPI";
 
 interface TaskSelectsProps {
-  category?: string;
+  categoryId?: string;
   status?: TaskStatus;
   importance?: TaskImportance;
-  onCategory: (event: SelectChangeEvent) => void;
+  onCategory: (newCategory: Category) => void;
   onStatus: (event: SelectChangeEvent<TaskStatus>) => void;
   onImportance: (event: SelectChangeEvent<TaskImportance>) => void;
 }
 const TaskSelector: React.FC<TaskSelectsProps> = ({
-  category = "",
+  categoryId = "",
   status = TaskStatus.TODO,
   importance = TaskImportance.NORMAL,
   onCategory,
   onStatus,
   onImportance,
 }) => {
-  const { categories } = useCategories();
   return (
     <>
       <Box>
-        <FormControl
-          variant="standard"
-          sx={{ minWidth: 120, paddingRight: "8px" }}
-        >
-          <InputLabel id="category-label">Category</InputLabel>
-          <Select
-            labelId="category-label"
-            id="category"
-            value={category}
-            onChange={onCategory}
-            label="Category"
-          >
-            {categories.map((c) => (
-              <MenuItem key={c.id} value={c.name}>
-                {c.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <CategorySelector categoryId={categoryId} onCategory={onCategory} />
         <FormControl
           variant="standard"
           sx={{ minWidth: 120, paddingRight: "8px" }}
