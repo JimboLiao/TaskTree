@@ -11,8 +11,8 @@ import {
 function wrapTaskInfo(d: TaskInfoResponse): TaskInfo {
   const { category, resources, ...task } = d;
 
-  const categoryColor =
-    category && category.length > 0 ? category[0].color : "#027929";
+  const categoryColor = category[0].color;
+  const categoryId = category[0].id;
 
   return {
     ...task,
@@ -24,6 +24,7 @@ function wrapTaskInfo(d: TaskInfoResponse): TaskInfo {
     end: dayjs(task.end),
     createTime: dayjs(task.createTime),
     updateTime: dayjs(task.updateTime),
+    categoryId,
     categoryColor,
     statusColor: StatusColor[d.status],
     importanceColor: ImportanceColor[d.importance],
@@ -34,7 +35,7 @@ function wrapTaskInfo(d: TaskInfoResponse): TaskInfo {
 function wrapTaskDetail(d: TaskDetailResponse): TaskDetail {
   const { category, attendee, ...task } = d;
   const taskInfo = wrapTaskInfo({ category, ...task });
-  const categoryName = category && category.length > 0 ? category[0].name : "";
+  const categoryName = category[0].name;
   return { ...taskInfo, attendees: attendee.map((a) => a.user), categoryName };
 }
 

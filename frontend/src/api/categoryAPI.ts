@@ -3,7 +3,7 @@ const apiUrl = import.meta.env.VITE_BACKEND_API_URL;
 const categoryApiUrl = `${apiUrl}/categories`;
 
 export type Category = {
-  id: string;
+  id: number;
   name: string;
   color: string;
   gCalendarId: string | null;

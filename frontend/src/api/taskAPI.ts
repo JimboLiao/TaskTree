@@ -70,6 +70,7 @@ export type TaskInfo = {
   location: string;
   createTime: Dayjs;
   updateTime: Dayjs;
+  categoryId: number;
   categoryColor: string;
   statusColor: string;
   importanceColor: string;
@@ -133,10 +134,22 @@ async function createTaskApi(
   return response.data.data;
 }
 
-const syncTasksToGoogleCalendar = async () => {
+const syncTasksToGoogleCalendarApi = async () => {
+  const response = await axios.post(`${taskApiUrl}/syncToGoogle`, undefined, {
+    withCredentials: true,
+  });
+
+  return response.data;
+};
+
+const importEventFromGoogleCalendarApi = async (
+  categoryId: number,
+  start: Dayjs,
+  end: Dayjs
+) => {
   const response = await axios.post(
-    `${taskApiUrl}/syncToGoogle`,
-    {},
+    `${taskApiUrl}/importFromGoogle/${categoryId}?start=${start.toISOString()}&end=${end.toISOString()}`,
+    undefined,
     { withCredentials: true }
   );
 
@@ -147,5 +160,6 @@ export {
   getTasksInRangeApi,
   getTaskDetailApi,
   createTaskApi,
-  syncTasksToGoogleCalendar,
+  syncTasksToGoogleCalendarApi,
+  importEventFromGoogleCalendarApi,
 };
