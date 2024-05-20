@@ -2,6 +2,7 @@ import { Box, styled } from "@mui/material";
 import { useState } from "react";
 import DataEntry from "./DataEntry";
 import { createTaskApi } from "../api/taskAPI";
+import dayjs from "dayjs";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -42,8 +43,9 @@ const TaskToolbar: React.FC = () => {
   }
 
   function handleAddTask() {
-    const d = new Date();
-    const task = { title: newTask, start: d, end: d, isAllDay: true };
+    const start = dayjs().startOf("day").toDate();
+    const end = dayjs().add(1, "day").startOf("day").toDate();
+    const task = { title: newTask, start, end, isAllDay: true };
     createTaskApi(task)
       .then(() => setNewTask("")) //@todo update task info
       .catch((err) => console.error(err));
