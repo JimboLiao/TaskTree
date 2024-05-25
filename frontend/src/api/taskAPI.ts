@@ -1,6 +1,10 @@
 import axios from "axios";
 import { Category } from "./categoryAPI";
-import { wrapTaskDetail, wrapTaskInfo } from "../utils/wrapperFunctions";
+import {
+  unwrapTaskDetail,
+  wrapTaskDetail,
+  wrapTaskInfo,
+} from "../utils/wrapperFunctions";
 import { User } from "./userAPI";
 import { Dayjs } from "dayjs";
 const apiUrl = import.meta.env.VITE_BACKEND_API_URL;
@@ -135,6 +139,43 @@ async function createTaskApi(
   return response.data.data;
 }
 
+const updateTaskDetailApi = async (taskdetail: TaskDetail) => {
+  const { task, category, attendees, resources } = unwrapTaskDetail(taskdetail);
+  const response = await axios.put(
+    `${taskApiUrl}/${task.id}`,
+    {
+      task,
+      category,
+      attendees,
+      resources,
+    },
+    { withCredentials: true }
+  );
+
+  return response.data;
+};
+
+const addNewTaskAttendeeApi = async (taskId: number, email: string) => {
+  const response = await axios.put(
+    `${taskApiUrl}/${taskId}/attendee`,
+    {
+      email,
+    },
+    { withCredentials: true }
+  );
+
+  return response.data.data;
+};
+
+const removeTaskAttendeeApi = async (taskId: number, attendee: Attendee) => {
+  const response = await axios.delete(
+    `${taskApiUrl}/${taskId}/attendee/${attendee.attendeeId}/${attendee.id}`,
+    { withCredentials: true }
+  );
+
+  return response.data;
+};
+
 const syncTasksToGoogleCalendarApi = async () => {
   const response = await axios.post(`${taskApiUrl}/syncToGoogle`, undefined, {
     withCredentials: true,
@@ -161,6 +202,9 @@ export {
   getTasksInRangeApi,
   getTaskDetailApi,
   createTaskApi,
+  updateTaskDetailApi,
+  addNewTaskAttendeeApi,
+  removeTaskAttendeeApi,
   syncTasksToGoogleCalendarApi,
   importEventFromGoogleCalendarApi,
 };
