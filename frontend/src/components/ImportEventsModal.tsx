@@ -6,6 +6,7 @@ import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { importEventFromGoogleCalendarApi } from "../api/taskAPI";
+import { useTaskInfo } from "../contexts/TaskInfoContext";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -41,6 +42,7 @@ const ImportEventsModal: React.FC<ImportEventsModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { fetchTaskInfos } = useTaskInfo();
   const [categoryId, setCategoryId] = useState("");
   const [start, setStart] = useState<Dayjs>(dayjs().startOf("day"));
   const [end, setEnd] = useState<Dayjs>(dayjs().add(1, "day").startOf("day"));
@@ -107,7 +109,7 @@ const ImportEventsModal: React.FC<ImportEventsModalProps> = ({
   function handleConfirm() {
     importEventFromGoogleCalendarApi(parseInt(categoryId), start, end)
       .then(() => {
-        //@todo update taskinfo
+        fetchTaskInfos();
         alert("Import successful!");
         setCategoryId("");
         onClose();

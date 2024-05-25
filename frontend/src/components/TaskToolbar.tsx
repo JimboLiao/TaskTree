@@ -3,6 +3,7 @@ import { useState } from "react";
 import DataEntry from "./DataEntry";
 import { createTaskApi } from "../api/taskAPI";
 import dayjs from "dayjs";
+import { useTaskInfo } from "../contexts/TaskInfoContext";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -13,7 +14,7 @@ const StyledContainer = styled("div")({
 
 const TaskToolbar: React.FC = () => {
   const [newTask, setNewTask] = useState("");
-
+  const { fetchTaskInfos } = useTaskInfo();
   return (
     <StyledContainer>
       <label>
@@ -43,11 +44,13 @@ const TaskToolbar: React.FC = () => {
   }
 
   function handleAddTask() {
-    const start = dayjs().startOf("day").toDate();
-    const end = dayjs().add(1, "day").startOf("day").toDate();
-    const task = { title: newTask, start, end, isAllDay: true };
+    const date = dayjs().startOf("day").toDate();
+    const task = { title: newTask, start: date, end: date, isAllDay: true };
     createTaskApi(task)
-      .then(() => setNewTask("")) //@todo update task info
+      .then(() => {
+        setNewTask("");
+        fetchTaskInfos();
+      })
       .catch((err) => console.error(err));
   }
 };

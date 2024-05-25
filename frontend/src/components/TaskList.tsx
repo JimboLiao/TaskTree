@@ -4,9 +4,11 @@ import TaskCard from "./TaskCard";
 import { useState } from "react";
 import TaskTableModal from "./TaskTableModal";
 import { TaskInfo } from "../api/taskAPI";
+import { useTaskInfo } from "../contexts/TaskInfoContext";
 const TaskList = ({ tasks }: { tasks: TaskInfo[] }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const { fetchTaskInfos } = useTaskInfo();
 
   return (
     <>
@@ -52,6 +54,8 @@ const TaskList = ({ tasks }: { tasks: TaskInfo[] }) => {
     setSelectedTaskId(taskId);
   }
   function handleClose() {
+    fetchTaskInfos();
+    setSelectedTaskId(null);
     setIsModalOpen(false);
   }
 };

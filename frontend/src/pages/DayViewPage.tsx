@@ -4,9 +4,10 @@ import TaskToolbar from "../components/TaskToolbar";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import TimeToolbar from "../components/TimeToolbar";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import TaskList from "../components/TaskList";
-import { TaskInfo, getTasksInRangeApi } from "../api/taskAPI";
+import { useTaskInfo } from "../contexts/TaskInfoContext";
+import dayjs from "dayjs";
 
 const StyledContainer = styled("div")({
   height: "100%",
@@ -39,26 +40,16 @@ const StyledScheduleSection = styled("section")({
 });
 
 const DayViewPage = () => {
+  const { taskInfos, setStartDate, setEndDate } = useTaskInfo();
+  const [date, setDate] = useState(dayjs());
   const calendarRef = useRef<FullCalendar | null>(null);
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-  const [date, setDate] = useState(formatter.format(new Date()));
-  const [tasks, setTasks] = useState<TaskInfo[]>([]);
 
-  useEffect(() => {
-    async function fetchAndSetTasks() {
-      let d = new Date(date);
-      const start = new Date(d.setHours(0, 0, 0, 0));
-      const end = new Date(d.setDate(d.getDate() + 1));
-      const tasks = await getTasksInRangeApi(start, end);
-      setTasks(tasks);
-    }
-
-    fetchAndSetTasks();
-  }, [date]);
+  function setNewDate(newDate: Date) {
+    const d = dayjs(newDate).startOf("day");
+    setDate(d);
+    setStartDate(d);
+    setEndDate(d.add(1, "day"));
+  }
 
   function handleTodaybtn() {
     const calendarApi = calendarRef.current?.getApi();
@@ -67,12 +58,7 @@ const DayViewPage = () => {
       return;
     }
     calendarApi.today();
-    setDate(formatter.format(calendarApi.getDate()));
-  }
-
-  function handleAddTask() {
-    //@todo add a new task
-    console.log("add task");
+    setNewDate(calendarApi.getDate());
   }
 
   function handleNextDay() {
@@ -82,7 +68,7 @@ const DayViewPage = () => {
       return;
     }
     calendarApi.next();
-    setDate(formatter.format(calendarApi.getDate()));
+    setNewDate(calendarApi.getDate());
   }
 
   function handlePrevDay() {
@@ -92,14 +78,14 @@ const DayViewPage = () => {
       return;
     }
     calendarApi.prev();
-    setDate(formatter.format(calendarApi.getDate()));
+    setNewDate(calendarApi.getDate());
   }
 
   return (
     <StyledContainer>
       <StyledTaskSection>
         <DayViewTitle onToday={handleTodaybtn} />
-        <TaskToolbar onAddTask={handleAddTask} />
+        <TaskToolbar />
         <Box
           sx={{
             height: "100%",
@@ -107,13 +93,13 @@ const DayViewPage = () => {
             overflow: "auto",
           }}
         >
-          <TaskList tasks={tasks} />
+          <TaskList tasks={taskInfos} />
         </Box>
       </StyledTaskSection>
 
       <StyledScheduleSection>
         <TimeToolbar
-          title={date.toString()}
+          title={date.format("MMM D, YYYY")}
           onNext={handleNextDay}
           onPrev={handlePrevDay}
         />
