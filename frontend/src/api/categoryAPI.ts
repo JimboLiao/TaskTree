@@ -6,7 +6,6 @@ export type Category = {
   id: number;
   name: string;
   color: string;
-  gCalendarId: string | null;
 };
 
 async function getCategoriesApi() {

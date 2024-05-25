@@ -37,7 +37,6 @@ export type Task = {
 export type Resource = {
   id: number;
   content: string;
-  taskid: number;
 };
 
 export type TaskInfoResponse = Task & { category: Category[] } & {
@@ -72,6 +71,7 @@ export type TaskInfo = {
   updateTime: Dayjs;
   categoryId: number;
   categoryColor: string;
+  categoryName: string;
   statusColor: string;
   importanceColor: string;
   resources: Resource[];
@@ -81,9 +81,10 @@ export type TaskDetailResponse = TaskInfoResponse & {
   attendee: { id: number; user: User }[];
 };
 
+export type Attendee = { attendeeId: number } & User;
+
 export type TaskDetail = TaskInfo & {
-  categoryName: string;
-  attendees: User[];
+  attendees: Attendee[];
 };
 
 async function getTasksInRangeApi(start: Date, end: Date): Promise<TaskInfo[]> {
