@@ -60,10 +60,21 @@ const deleteResource = async (resourceId: number) => {
   });
 };
 
+const deleteManyResources = async (resourceIds: number[]) => {
+  return await prisma.resource.deleteMany({
+    where: {
+      id: {
+        in: resourceIds,
+      },
+    },
+  });
+};
+
 export {
   createResource,
   createManyResources,
   getResourcesByTaskId,
   updateResource,
   deleteResource,
+  deleteManyResources,
 };

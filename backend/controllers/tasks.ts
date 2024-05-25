@@ -3,6 +3,7 @@ import * as taskEntity from "../entities/task";
 import * as userEntity from "../entities/users";
 import * as categoryEntity from "../entities/category";
 import * as taskOfUserEntity from "../entities/taskOfUser";
+import * as resourceEntity from "../entities/resource";
 import * as googleAPI from "../google/googleAPI";
 import * as parse from "../utils/parseFunctions";
 import {
@@ -11,6 +12,7 @@ import {
   ForbiddenError,
 } from "../utils/errors/customErrors";
 import { Task } from "@prisma/client";
+import { findElementsNotInSecondArray } from "../utils/utils";
 
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -79,6 +81,148 @@ const getTaskDetail = async (
     }
 
     res.status(200).json({ status: "success", data: task });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// update task, resource and attendees
+const updateTaskDetail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = res.locals.id;
+    const taskId = parseInt(req.params.id, 10);
+    const { task, resources, category } = req.body;
+
+    const oldTask = await taskEntity.getTaskById(taskId, userId);
+    if (!oldTask) {
+      throw new NotFoundError("Task not found");
+    }
+
+    // update category
+    const newCategoryId = category.id;
+    if (newCategoryId !== oldTask.category[0].id) {
+      await taskEntity.updateTaskCategoryRelation({
+        taskId,
+        oldCategoryId: oldTask.category[0].id,
+        newCategoryId,
+      });
+    }
+
+    // update task
+    await taskEntity.updateTask({
+      task,
+      taskId,
+    });
+
+    // update resources
+    await updateResources({
+      taskId,
+      oldResources: oldTask.resources,
+      newResources: resources,
+    });
+
+    res
+      .status(200)
+      .json({ status: "success", message: "Updated successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+async function updateResources({
+  taskId,
+  oldResources,
+  newResources,
+}: {
+  taskId: number;
+  oldResources: { id: number; content: string }[];
+  newResources: { id: number; content: string }[];
+}) {
+  const deleteResources = findElementsNotInSecondArray(
+    oldResources,
+    newResources
+  );
+
+  if (deleteResources.length > 0) {
+    await resourceEntity.deleteManyResources(deleteResources.map((r) => r.id));
+  }
+
+  const addResources = findElementsNotInSecondArray(newResources, oldResources);
+  if (addResources.length > 0) {
+    await resourceEntity.createManyResources({
+      taskId,
+      res: addResources.map((r) => ({ content: r.content })),
+    });
+  }
+}
+
+const addTaskAttendee = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const taskId = parseInt(req.params.id, 10);
+    const { email } = req.body;
+    const user = await userEntity.getUserByEmail(email);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    // create new attendee
+    const newAtt = await taskOfUserEntity.createTaskOfUser({
+      taskId,
+      userId: user.id,
+    });
+
+    // assign task to new attendee's Uncategorized category
+    let uncategorized = await categoryEntity.getUncategorized(user.id);
+    if (!uncategorized) {
+      uncategorized = await categoryEntity.createUncategorized(user.id);
+    }
+    await taskEntity.connectTaskCategoryRelation({
+      taskId,
+      categoryId: uncategorized.id,
+    });
+
+    res.status(200).json({ status: "success", data: newAtt });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deletTaskAttendee = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = parseInt(req.params.userId, 10);
+    const taskId = parseInt(req.params.id, 10);
+    const attendeeId = parseInt(req.params.attendeeId, 10);
+
+    // delete task's attendee
+    await taskOfUserEntity.deleteTaskOfUser(attendeeId);
+
+    // disconnect task from deleted attendee's category
+    const category = await categoryEntity.getCategoryByUserAndTask({
+      userId,
+      taskId,
+    });
+    if (!category) {
+      throw new NotFoundError("Category not found");
+    }
+    await taskEntity.disconnectTaskCategoryRelation({
+      taskId,
+      categoryId: category.id,
+    });
+
+    res
+      .status(200)
+      .json({ status: "success", message: "Deleted successfully" });
   } catch (err) {
     next(err);
   }
@@ -285,6 +429,9 @@ export {
   getTasksInRange,
   getAllTasks,
   getTaskDetail,
+  updateTaskDetail,
+  addTaskAttendee,
+  deletTaskAttendee,
   syncTasksToGoogleCalendar,
   importTasksFromGoogle,
 };

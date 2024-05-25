@@ -11,6 +11,18 @@ router.post(
   checkBodyParams(["categoryId", "task", "resources"]),
   taskController.createTask
 );
+router.put(
+  "/:id/attendee",
+  authJWT,
+  checkBodyParams(["email"]),
+  taskController.addTaskAttendee
+);
+router.put(
+  "/:id",
+  authJWT,
+  checkBodyParams(["task", "category", "resources", "attendees"]),
+  taskController.updateTaskDetail
+);
 router.get("/get", authJWT, taskController.getTasksInRange);
 router.get("/get/:id", authJWT, taskController.getTaskDetail);
 router.get("/getAll", authJWT, taskController.getAllTasks);
@@ -19,6 +31,11 @@ router.post(
   "/importFromGoogle/:categoryId",
   authJWT,
   taskController.importTasksFromGoogle
+);
+router.delete(
+  "/:id/attendee/:attendeeId/:userId",
+  authJWT,
+  taskController.deletTaskAttendee
 );
 
 export default router;

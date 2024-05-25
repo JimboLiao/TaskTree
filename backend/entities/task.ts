@@ -111,7 +111,7 @@ const getTasksInRange = async ({
   const tasks = await prisma.task.findMany({
     where: {
       start: {
-        lte: end,
+        lt: end,
       },
       end: {
         gte: start,
@@ -124,7 +124,7 @@ const getTasksInRange = async ({
     },
     include: {
       category: { select: { id: true, name: true, color: true } },
-      resources: true,
+      resources: { select: { id: true, content: true } },
     },
   });
   return tasks;
@@ -197,40 +197,178 @@ const getTaskById = async (taskId: number, userId: number) => {
   return task;
 };
 
-const updateTask = async ({
-  taskId,
-  task,
-  taskOfUserId,
-  gEventId,
-}: {
-  taskId: number;
-  task: Task;
-  taskOfUserId?: number;
-  gEventId?: string | null;
-}) => {
-  let att =
-    taskOfUserId && gEventId
-      ? {
-          update: {
-            where: {
-              id: taskOfUserId,
-            },
-            data: {
-              gEventId: gEventId,
-            },
-          },
-        }
-      : undefined;
+const updateTask = async ({ taskId, task }: { taskId: number; task: Task }) => {
   const newTask = await prisma.task.update({
     where: {
       id: taskId,
     },
     data: {
       ...task,
-      attendee: att,
     },
   });
   return newTask;
 };
 
-export { createTask, getTasksInRange, getAllTasks, getTaskById, updateTask };
+const connectTaskCategoryRelation = async ({
+  taskId,
+  categoryId,
+}: {
+  taskId: number;
+  categoryId: number;
+}) => {
+  const newTask = await prisma.task.update({
+    where: {
+      id: taskId,
+    },
+    data: {
+      category: {
+        connect: {
+          id: categoryId,
+        },
+      },
+    },
+    select: {
+      category: { select: { id: true, name: true, color: true } },
+    },
+  });
+  return newTask;
+};
+
+const disconnectTaskCategoryRelation = async ({
+  taskId,
+  categoryId,
+}: {
+  taskId: number;
+  categoryId: number;
+}) => {
+  await prisma.task.update({
+    where: {
+      id: taskId,
+    },
+    data: {
+      category: {
+        disconnect: {
+          id: categoryId,
+        },
+      },
+    },
+  });
+  return;
+};
+
+const updateTaskCategoryRelation = async ({
+  taskId,
+  oldCategoryId,
+  newCategoryId,
+}: {
+  taskId: number;
+  oldCategoryId: number;
+  newCategoryId: number;
+}) => {
+  const newTask = await prisma.task.update({
+    where: {
+      id: taskId,
+    },
+    data: {
+      category: {
+        connect: {
+          id: newCategoryId,
+        },
+        disconnect: {
+          id: oldCategoryId,
+        },
+      },
+    },
+    select: {
+      category: { select: { id: true, name: true, color: true } },
+    },
+  });
+  return newTask;
+};
+
+const addTaskAttendee = async ({
+  taskId,
+  userId,
+  newUserId,
+}: {
+  taskId: number;
+  userId: number;
+  newUserId: number;
+}) => {
+  const newAttendee = await prisma.task.update({
+    where: {
+      id: taskId,
+      attendee: {
+        some: {
+          userId: userId,
+        },
+      },
+    },
+    data: {
+      attendee: {
+        create: {
+          userId: newUserId,
+        },
+      },
+    },
+    select: {
+      attendee: {
+        select: {
+          id: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              createTime: true,
+              updateTime: true,
+            },
+          },
+        },
+        where: { userId: newUserId },
+      },
+    },
+  });
+
+  return newAttendee;
+};
+
+const deleteTaskAttendee = async ({
+  taskId,
+  userId,
+}: {
+  taskId: number;
+  userId: number;
+}) => {
+  const newAttendee = await prisma.task.update({
+    where: {
+      id: taskId,
+      attendee: {
+        some: {
+          userId: userId,
+        },
+      },
+    },
+    data: {
+      attendee: {
+        delete: {
+          id: userId,
+          userId: userId,
+        },
+      },
+    },
+  });
+  return newAttendee;
+};
+
+export {
+  createTask,
+  getTasksInRange,
+  getAllTasks,
+  getTaskById,
+  updateTask,
+  connectTaskCategoryRelation,
+  disconnectTaskCategoryRelation,
+  updateTaskCategoryRelation,
+  addTaskAttendee,
+};

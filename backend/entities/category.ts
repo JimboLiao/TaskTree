@@ -30,6 +30,25 @@ const createCategory = async ({
   return newCategory;
 };
 
+const createUncategorized = async (userId: number) => {
+  const newCategory = await prisma.category.create({
+    data: {
+      name: "Uncategorized",
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      color: true,
+    },
+  });
+  return newCategory;
+};
+
 const getCategories = async (userId: number) => {
   const categories = await prisma.category.findMany({
     where: {
@@ -92,6 +111,31 @@ const getUncategorized = async (userId: number) => {
   return category;
 };
 
+const getCategoryByUserAndTask = async ({
+  userId,
+  taskId,
+}: {
+  userId: number;
+  taskId: number;
+}) => {
+  const category = await prisma.category.findFirst({
+    where: {
+      userId: userId,
+      tasks: {
+        some: {
+          id: taskId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      color: true,
+    },
+  });
+  return category;
+};
+
 const updateCategory = async ({
   category,
   userId,
@@ -115,9 +159,11 @@ const updateCategory = async ({
 
 export {
   createCategory,
+  createUncategorized,
   getCategories,
   getCategory,
   getUncategorized,
   getUnsynchronizedCategories,
+  getCategoryByUserAndTask,
   updateCategory,
 };
