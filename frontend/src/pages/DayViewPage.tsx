@@ -4,7 +4,7 @@ import TaskToolbar from "../components/TaskToolbar";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import TimeToolbar from "../components/TimeToolbar";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TaskList from "../components/TaskList";
 import { useTaskInfo } from "../contexts/TaskInfoContext";
 import dayjs from "dayjs";
@@ -44,6 +44,9 @@ const DayViewPage = () => {
   const { taskInfos, setStartDate, setEndDate } = useTaskInfo();
   const [date, setDate] = useState(dayjs());
   const calendarRef = useRef<FullCalendar | null>(null);
+  useEffect(() => {
+    setNewDate(new Date());
+  }, []);
 
   function setNewDate(newDate: Date) {
     const d = dayjs(newDate).startOf("day");
