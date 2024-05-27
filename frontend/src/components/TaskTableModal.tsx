@@ -90,7 +90,7 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
         if (!taskId) return;
         const t = await getTaskDetailApi(taskId);
         setTaskDetail(t);
-        setIsReminder(t.reminder != 0);
+        setIsReminder(t.reminder !== 0);
       } catch (err) {
         console.error(err);
       }
@@ -249,6 +249,7 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
                             paddingBottom: "0px",
                           }}
                           value={isReminder}
+                          checked={isReminder}
                           onChange={handleChangeIsReminder}
                         />
                       }
