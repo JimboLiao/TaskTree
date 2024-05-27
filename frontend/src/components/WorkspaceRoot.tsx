@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom";
 import WorkspaceSideBar from "./WorkspaceSideBar";
 import AppHeader from "./AppHeader";
 import { styled } from "@mui/material";
-import { TaskInfoProvider } from "../contexts/TaskInfoContext";
 
 const StyledContainer = styled("div")({
   width: "100%",
@@ -19,15 +18,13 @@ const StyledWorkspaceContainer = styled("div")({
 const WorkspaceRoot = () => {
   return (
     <>
-      <TaskInfoProvider>
-        <AppHeader />
-        <StyledContainer>
-          <StyledWorkspaceContainer>
-            <WorkspaceSideBar />
-            <Outlet />
-          </StyledWorkspaceContainer>
-        </StyledContainer>
-      </TaskInfoProvider>
+      <AppHeader />
+      <StyledContainer>
+        <StyledWorkspaceContainer>
+          <WorkspaceSideBar />
+          <Outlet />
+        </StyledWorkspaceContainer>
+      </StyledContainer>
     </>
   );
 };
