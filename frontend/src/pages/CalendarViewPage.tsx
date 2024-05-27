@@ -3,6 +3,7 @@ import WorkspaceTitle from "../components/WorkspaceTitle";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import { syncTasksToGoogleCalendarApi } from "../api/taskAPI";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -23,7 +24,7 @@ const CalendarViewPage = () => {
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           headerToolbar={{
-            left: "prev,next today sync import",
+            left: "prev,next today sync",
             center: "title",
             right: "dayGridMonth,timeGridWeek,timeGridDay",
           }}
@@ -32,11 +33,6 @@ const CalendarViewPage = () => {
               text: "Sync",
               click: handleSync,
               hint: "Sync data to Google Calendar",
-            },
-            import: {
-              text: "Import",
-              click: handleImport,
-              hint: "Import data from Google Calendar",
             },
           }}
           height="100%"
@@ -47,10 +43,13 @@ const CalendarViewPage = () => {
   );
 
   function handleSync() {
-    // @todo sync data to google calendar
-  }
-  function handleImport() {
-    // @todo import data from google calendar
+    syncTasksToGoogleCalendarApi()
+      .then((data) => {
+        alert("Sync successful!");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 };
 
