@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import TaskList from "../components/TaskList";
 import { useTaskInfo } from "../contexts/TaskInfoContext";
 import dayjs from "dayjs";
+import { wrapFullCalendarEvent } from "../utils/wrapperFunctions";
 
 const StyledContainer = styled("div")({
   height: "100%",
@@ -110,7 +111,7 @@ const DayViewPage = () => {
           headerToolbar={false}
           initialDate={new Date()}
           ref={calendarRef}
-          // nowIndicator={true}
+          events={taskInfos.map((taskInfo) => wrapFullCalendarEvent(taskInfo))}
         />
       </StyledScheduleSection>
     </StyledContainer>

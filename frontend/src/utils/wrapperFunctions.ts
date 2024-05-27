@@ -87,4 +87,22 @@ function unwrapTaskDetail(d: TaskDetail) {
   return { attendees: att, resources, category, task };
 }
 
-export { wrapTaskInfo, wrapAttendee, wrapTaskDetail, unwrapTaskDetail };
+function wrapFullCalendarEvent(task: TaskInfo) {
+  return {
+    id: task.id.toString(),
+    title: task.title,
+    start: task.start.toDate(),
+    end: task.end.toDate(),
+    allDay: task.isAllDay,
+    description: task.description,
+    color: task.categoryColor,
+  };
+}
+
+export {
+  wrapTaskInfo,
+  wrapAttendee,
+  wrapTaskDetail,
+  unwrapTaskDetail,
+  wrapFullCalendarEvent,
+};

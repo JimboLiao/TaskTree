@@ -3,6 +3,10 @@ import WorkspaceTitle from "../components/WorkspaceTitle";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import { useTaskInfo } from "../contexts/TaskInfoContext";
+import { wrapFullCalendarEvent } from "../utils/wrapperFunctions";
+import { DatesSetArg } from "@fullcalendar/core/index.js";
+import dayjs from "dayjs";
 import { syncTasksToGoogleCalendarApi } from "../api/taskAPI";
 
 const StyledContainer = styled("div")({
@@ -17,6 +21,11 @@ const StyledContainer = styled("div")({
 });
 
 const CalendarViewPage = () => {
+  const { taskInfos, setStartDate, setEndDate } = useTaskInfo();
+  const handleDatesSet = (arg: DatesSetArg) => {
+    setStartDate(dayjs(arg.start));
+    setEndDate(dayjs(arg.end));
+  };
   return (
     <StyledContainer>
       <WorkspaceTitle title="Calendar" />
@@ -37,6 +46,9 @@ const CalendarViewPage = () => {
           }}
           height="100%"
           initialView="dayGridMonth"
+          initialDate={new Date()}
+          datesSet={handleDatesSet}
+          events={taskInfos.map((taskInfo) => wrapFullCalendarEvent(taskInfo))}
         />
       </Box>
     </StyledContainer>
