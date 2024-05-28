@@ -1,4 +1,4 @@
-import { Button, Typography, styled } from "@mui/material";
+import { Button, CircularProgress, Typography, styled } from "@mui/material";
 import Modal from "./Modal";
 import CategorySelector from "./CategorySelector";
 import { Category } from "../api/categoryAPI";
@@ -46,6 +46,7 @@ const ImportEventsModal: React.FC<ImportEventsModalProps> = ({
   const [categoryId, setCategoryId] = useState("");
   const [start, setStart] = useState<Dayjs>(dayjs().startOf("day"));
   const [end, setEnd] = useState<Dayjs>(dayjs().add(1, "day").startOf("day"));
+  const [isImporting, setIsImporting] = useState(false);
 
   return (
     <>
@@ -81,6 +82,13 @@ const ImportEventsModal: React.FC<ImportEventsModalProps> = ({
             </Button>
             <Button variant="contained" onClick={handleConfirm} color="primary">
               Confirm
+              {isImporting && (
+                <CircularProgress
+                  size={16}
+                  sx={{ marginLeft: "8px" }}
+                  color="inherit"
+                />
+              )}
             </Button>
           </ButtonContainer>
         </StyledContainer>
@@ -107,8 +115,10 @@ const ImportEventsModal: React.FC<ImportEventsModalProps> = ({
   }
 
   function handleConfirm() {
+    setIsImporting(true);
     importEventFromGoogleCalendarApi(parseInt(categoryId), start, end)
       .then(() => {
+        setIsImporting(false);
         fetchTaskInfos();
         alert("Import successful!");
         setCategoryId("");
