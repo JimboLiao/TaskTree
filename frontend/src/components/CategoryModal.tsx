@@ -1,6 +1,7 @@
 import { Button, TextField, styled } from "@mui/material";
 import { useState } from "react";
-import { Category, createCategoryApi } from "../api/categoryAPI";
+import { createCategoryApi } from "../api/categoryAPI";
+import { Category } from "../../../config/type";
 import Modal from "./Modal";
 
 const StyledContainer = styled("div")({

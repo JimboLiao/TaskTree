@@ -1,51 +1,23 @@
 import axios from "axios";
-import { Category } from "./categoryAPI";
 import {
   unwrapTaskDetail,
   wrapTaskDetail,
   wrapTaskInfo,
 } from "../utils/wrapperFunctions";
-import { User } from "./userAPI";
+import {
+  User,
+  Category,
+  Task,
+  Resource,
+  TaskImportance,
+  TaskStatus,
+} from "../../../config/type";
 import { Dayjs } from "dayjs";
+
 const apiUrl = import.meta.env.VITE_BACKEND_API_URL;
 const taskApiUrl = `${apiUrl}/tasks`;
 
-export enum TaskStatus {
-  TODO = "TODO",
-  DOING = "DOING",
-  DONE = "DONE",
-}
-
-export enum TaskImportance {
-  HIGH = "HIGH",
-  NORMAL = "NORMAL",
-  LOW = "LOW",
-}
-
-export type Task = {
-  id: number;
-  title: string | null;
-  start: string;
-  end: string;
-  description: string | null;
-  isAllDay: boolean;
-  status: TaskStatus;
-  importance: TaskImportance;
-  reminder: number | null;
-  parentTaskId: number | null;
-  location: string | null;
-  createTime: string;
-  updateTime: string;
-};
-
-export type Resource = {
-  id: number;
-  content: string;
-};
-
-export type TaskInfoResponse = Task & { category: Category[] } & {
-  resources: Resource[];
-};
+export type TaskInfoResponse = Task & { category: Category[] };
 
 export enum StatusColor {
   TODO = "#131313",
@@ -78,16 +50,17 @@ export type TaskInfo = {
   categoryName: string;
   statusColor: string;
   importanceColor: string;
-  resources: Resource[];
 };
 
 export type TaskDetailResponse = TaskInfoResponse & {
+  resources: Resource[];
+} & {
   attendee: { id: number; user: User }[];
 };
 
 export type Attendee = { attendeeId: number } & User;
 
-export type TaskDetail = TaskInfo & {
+export type TaskDetail = TaskInfo & { resources: Resource[] } & {
   attendees: Attendee[];
 };
 

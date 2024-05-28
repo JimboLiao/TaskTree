@@ -1,14 +1,7 @@
 import axios from "axios";
+import { User } from "../../../config/type";
 const apiUrl = import.meta.env.VITE_BACKEND_API_URL;
 const userApiUrl = `${apiUrl}/users`;
-
-export type User = {
-  id: number;
-  email: string;
-  username: string | null;
-  createTime: string;
-  updateTime: string;
-};
 
 async function loginApi(email: string, password: string): Promise<User> {
   const response = await axios.post(

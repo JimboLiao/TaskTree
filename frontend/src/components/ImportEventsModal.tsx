@@ -1,7 +1,7 @@
 import { Button, CircularProgress, Typography, styled } from "@mui/material";
 import Modal from "./Modal";
 import CategorySelector from "./CategorySelector";
-import { Category } from "../api/categoryAPI";
+import { Category } from "../../../config/type";
 import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";

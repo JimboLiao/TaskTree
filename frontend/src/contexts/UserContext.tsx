@@ -1,12 +1,12 @@
 import { createContext, useContext, useState } from "react";
 import {
-  User,
   getUserProfileApi,
   googleLoginApi,
   loginApi,
   logoutApi,
   signupApi,
 } from "../api/userAPI";
+import { User } from "../../../config/type";
 
 interface UserContextType {
   user: User | undefined;

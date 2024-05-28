@@ -6,7 +6,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import useCategories from "../hooks/useCategories";
-import { Category } from "../api/categoryAPI";
+import { Category } from "../../../config/type";
 
 interface CategorySelectorProps {
   categoryId: string;

@@ -124,7 +124,6 @@ const getTasksInRange = async ({
     },
     include: {
       category: { select: { id: true, name: true, color: true } },
-      resources: { select: { id: true, content: true } },
     },
   });
   return tasks;

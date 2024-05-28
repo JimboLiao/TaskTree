@@ -1,7 +1,7 @@
 import { Divider, List, styled } from "@mui/material";
 import SideBarItem from "./SideBarItem";
 import { useState } from "react";
-import { Category } from "../api/categoryAPI";
+import { Category } from "../../../config/type";
 import CategoryModal from "./CategoryModal";
 import { useNavigate } from "react-router-dom";
 import useCategories from "../hooks/useCategories";

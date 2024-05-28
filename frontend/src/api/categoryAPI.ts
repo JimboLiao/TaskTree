@@ -2,12 +2,6 @@ import axios from "axios";
 const apiUrl = import.meta.env.VITE_BACKEND_API_URL;
 const categoryApiUrl = `${apiUrl}/categories`;
 
-export type Category = {
-  id: number;
-  name: string;
-  color: string;
-};
-
 async function getCategoriesApi() {
   const response = await axios.get(`${categoryApiUrl}/`, {
     withCredentials: true,

@@ -6,14 +6,12 @@ import {
   ImportanceColor,
   TaskDetailResponse,
   TaskDetail,
-  Task,
   Attendee,
 } from "../api/taskAPI";
-import { Category } from "../api/categoryAPI";
-import { User } from "../api/userAPI";
+import { Category, User, Task } from "../../../config/type";
 
 function wrapTaskInfo(d: TaskInfoResponse): TaskInfo {
-  const { category, resources, ...task } = d;
+  const { category, ...task } = d;
 
   const categoryColor = category[0].color;
   const categoryId = category[0].id;
@@ -34,7 +32,6 @@ function wrapTaskInfo(d: TaskInfoResponse): TaskInfo {
     categoryName,
     statusColor: StatusColor[d.status],
     importanceColor: ImportanceColor[d.importance],
-    resources,
   };
 }
 
@@ -43,11 +40,12 @@ function wrapAttendee(attendee: { id: number; user: User }): Attendee {
 }
 
 function wrapTaskDetail(d: TaskDetailResponse): TaskDetail {
-  const { category, attendee, ...task } = d;
+  const { category, attendee, resources, ...task } = d;
   const taskInfo = wrapTaskInfo({ category, ...task });
   return {
     ...taskInfo,
     attendees: attendee.map((a) => wrapAttendee(a)),
+    resources,
   };
 }
 

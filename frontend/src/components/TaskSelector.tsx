@@ -6,9 +6,8 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { TaskImportance, TaskStatus } from "../api/taskAPI";
+import { TaskStatus, TaskImportance, Category } from "../../../config/type";
 import CategorySelector from "./CategorySelector";
-import { Category } from "../api/categoryAPI";
 
 interface TaskSelectsProps {
   categoryId?: string;

@@ -36,11 +36,9 @@ import {
   getTaskDetailApi,
   removeTaskAttendeeApi,
   TaskDetail,
-  TaskImportance,
-  TaskStatus,
   updateTaskDetailApi,
 } from "../api/taskAPI";
-import { Category } from "../api/categoryAPI";
+import { Category, TaskImportance, TaskStatus } from "../../../config/type";
 import { wrapAttendee } from "../utils/wrapperFunctions";
 
 const StyledContainer = styled("div")(({ color }) => ({
