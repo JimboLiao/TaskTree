@@ -96,7 +96,7 @@ async function createTaskApi(
     status?: TaskStatus;
     importance?: TaskImportance;
   },
-  categoryId: number = -1,
+  categoryId: number | null = null,
   resources: { content: string }[] = []
 ) {
   const response = await axios.post(
@@ -108,7 +108,6 @@ async function createTaskApi(
     },
     { withCredentials: true }
   );
-
   return response.data.data;
 }
 

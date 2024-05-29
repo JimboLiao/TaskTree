@@ -6,11 +6,7 @@ import * as taskOfUserEntity from "../entities/taskOfUser";
 import * as resourceEntity from "../entities/resource";
 import * as googleAPI from "../google/googleAPI";
 import * as parse from "../utils/parseFunctions";
-import {
-  BadRequestError,
-  NotFoundError,
-  ForbiddenError,
-} from "../utils/errors/customErrors";
+import { BadRequestError, NotFoundError } from "../utils/errors/customErrors";
 import { Task } from "@prisma/client";
 import { findElementsNotInSecondArray } from "../utils/utils";
 

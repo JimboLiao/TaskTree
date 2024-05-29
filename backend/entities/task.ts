@@ -28,7 +28,7 @@ const createTask = async ({
 }: {
   task: Task;
   userId: number;
-  categoryId: number;
+  categoryId: number | null;
   resources?: { content: string }[];
   gEventId?: string | null;
 }) => {
@@ -56,15 +56,9 @@ const createTask = async ({
         },
       };
 
-  let cate: {
-    create?: { name: string; userId: number };
-    connect?: { id: number };
-  } = {
-    connect: {
-      id: categoryId,
-    },
-  };
-  if (categoryId === -1) {
+  let cate = undefined;
+  if (!categoryId) {
+    // if not provide categoryId, create/connect to uncategorized
     const uncategorized = await getUncategorized(userId);
     if (!uncategorized) {
       cate = {
@@ -80,6 +74,13 @@ const createTask = async ({
         },
       };
     }
+  } else {
+    // cconnect to provided categoryId
+    cate = {
+      connect: {
+        id: categoryId,
+      },
+    };
   }
   const newTask = await prisma.task.create({
     data: {
