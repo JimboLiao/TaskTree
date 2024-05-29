@@ -44,13 +44,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     });
     res.status(200).json({
       status: "success",
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        createTime: user.createTime,
-        updateTime: user.updateTime,
-      },
+      user,
       token: jwt,
     });
   } catch (err) {

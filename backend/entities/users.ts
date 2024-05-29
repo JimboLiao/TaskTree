@@ -22,7 +22,7 @@ const createUser = async ({
   email: string;
   password?: string;
   refreshToken?: string;
-}): Promise<User> => {
+}) => {
   let hashpassword = null;
   if (password) hashpassword = await bcrypt.hash(password, SALTROUND);
   const date = new Date();
@@ -33,6 +33,13 @@ const createUser = async ({
       createTime: date,
       updateTime: date,
       refreshToken: refreshToken,
+    },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      createTime: true,
+      updateTime: true,
     },
   });
   return user;
@@ -56,7 +63,14 @@ const loginUser = async ({
     throw new NotFoundError("No password, try 3rd party login.");
 
   const match = await bcrypt.compare(password, user.password);
-  if (match) return user;
+  if (match)
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      createTime: user.createTime,
+      updateTime: user.updateTime,
+    };
 
   throw new ValidationError("Password mismatch");
 };
@@ -67,7 +81,6 @@ const getUserById = async (id: number) => {
       id: id,
     },
     select: {
-      password: false,
       id: true,
       email: true,
       username: true,
