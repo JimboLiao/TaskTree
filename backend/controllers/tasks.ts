@@ -184,7 +184,7 @@ const addTaskAttendee = async (
       categoryId: uncategorized.id,
     });
 
-    res.status(200).json({ status: "success", data: newAtt });
+    res.status(201).json({ status: "success", data: newAtt });
   } catch (err) {
     next(err);
   }
