@@ -3,7 +3,6 @@ import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import responses from "./swaggerResponse";
 import requestBodies from "./swaggerRequestBody";
-import schemas from "./swaggerSchema";
 
 const initSwagger = (app: Express) => {
   const options: swaggerJsdoc.Options = {
@@ -23,7 +22,6 @@ const initSwagger = (app: Express) => {
         },
         responses,
         requestBodies,
-        schemas,
       },
       security: [
         {
