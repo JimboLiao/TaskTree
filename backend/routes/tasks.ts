@@ -27,7 +27,7 @@ const router = express.Router();
 router.post(
   "/",
   authJWT,
-  checkBodyParams(["categoryId", "task", "resources"]),
+  checkBodyParams(["categoryId", "task"]),
   taskController.createTask
 );
 
@@ -97,7 +97,7 @@ router.post(
 router.put(
   "/:id",
   authJWT,
-  checkBodyParams(["task", "category", "resources", "attendees"]),
+  checkBodyParams(["task", "category", "resources"]),
   taskController.updateTaskDetail
 );
 
