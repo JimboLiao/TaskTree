@@ -3,17 +3,19 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import TaskCard from "./TaskCard";
 import { useState } from "react";
 import TaskTableModal from "./TaskTableModal";
-
-//@todo add tasks type
-const TaskList = ({ tasks }) => {
+import { TaskInfo } from "../api/taskAPI";
+import { useTaskInfo } from "../contexts/TaskInfoContext";
+const TaskList = ({ tasks }: { tasks: TaskInfo[] }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const { fetchTaskInfos } = useTaskInfo();
 
   return (
     <>
       {tasks.length > 0 ? (
-        tasks.map((task, index) => (
+        tasks.map((task) => (
           <TaskCard
-            key={index}
+            key={task.id}
             title={task.title}
             start={task.start}
             end={task.end}
@@ -21,7 +23,8 @@ const TaskList = ({ tasks }) => {
             statusColor={task.statusColor}
             importanceColor={task.importanceColor}
             categoryColor={task.categoryColor}
-            onTaskCard={handleClickTaskCard}
+            isAllDay={task.isAllDay}
+            onTaskCard={() => handleClickTaskCard(task.id)}
           />
         ))
       ) : (
@@ -38,17 +41,22 @@ const TaskList = ({ tasks }) => {
           <Typography>No Tasks here.</Typography>
         </Box>
       )}
-      <TaskTableModal isModalOpen={isModalOpen} onModalClose={handleClose} />
+      <TaskTableModal
+        isModalOpen={isModalOpen}
+        onModalClose={handleClose}
+        taskId={selectedTaskId}
+      />
     </>
   );
 
-  function handleClickTaskCard() {
+  function handleClickTaskCard(taskId: number) {
     setIsModalOpen(true);
+    setSelectedTaskId(taskId);
   }
   function handleClose() {
+    fetchTaskInfos();
+    setSelectedTaskId(null);
     setIsModalOpen(false);
-    // @todo close modal
-    // send request to api to change update task data
   }
 };
 

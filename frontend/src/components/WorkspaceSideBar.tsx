@@ -1,5 +1,10 @@
 import { Divider, List, styled } from "@mui/material";
 import SideBarItem from "./SideBarItem";
+import { useState } from "react";
+import { Category } from "../../../config/type";
+import CategoryModal from "./CategoryModal";
+import { useNavigate } from "react-router-dom";
+import useCategories from "../hooks/useCategories";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -11,42 +16,63 @@ const StyledContainer = styled("div")({
   overflow: "auto",
 });
 
-//@todo categories are temporary data, should be removed
-const categories = [
-  {
-    name: "Work",
-    color: "#1983FF",
-  },
-  {
-    name: "Travel",
-    color: "#207C00",
-  },
-];
-
 const WorkspaceSideBar: React.FC = () => {
+  const { categories, updateCategories } = useCategories();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
+
   return (
     <>
       <StyledContainer>
         <List>
-          {["Day view", "Calendar"].map((item) => {
-            return <SideBarItem key={item} text={item} />;
-          })}
+          <SideBarItem
+            key={"Day view"}
+            text={"Day view"}
+            onClick={() => navigate("/workspace/dayview")}
+          />
+          <SideBarItem
+            key={"Calendar"}
+            text={"Calendar"}
+            onClick={() => navigate("/workspace/calendarview")}
+          />
         </List>
         <Divider />
         <List>
           {categories?.map((item) => {
             return (
               <SideBarItem
-                key={item.name}
+                key={item.id}
                 text={item.name}
                 color={item.color}
+                onClick={handleNavigateToTreeView(item.id.toString())}
               />
             );
           })}
+          <SideBarItem text="Add Category" onClick={handleOpenModal} />
         </List>
       </StyledContainer>
+
+      <CategoryModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onAfterAddCategory={handleAddCategories}
+      />
     </>
   );
+
+  function handleOpenModal() {
+    setIsOpen(true);
+  }
+  function handleAddCategories(newCategory: Category) {
+    updateCategories([...categories, newCategory]);
+    setIsOpen(false);
+  }
+  function handleNavigateToTreeView(id: string) {
+    const nav = () => {
+      navigate(`/workspace/treeview/${id}`);
+    };
+    return nav;
+  }
 };
 
 export default WorkspaceSideBar;

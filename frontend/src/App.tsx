@@ -10,6 +10,7 @@ import WorkspaceRoot from "./components/WorkspaceRoot";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { UserProvider } from "./contexts/UserContext";
+import { TaskInfoProvider } from "./contexts/TaskInfoContext";
 import ProfilePage from "./pages/ProfilePage";
 import GoogleLoginPage from "./pages/GoogleLoginPage";
 
@@ -55,7 +56,9 @@ function App() {
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <UserProvider>
-          <RouterProvider router={router} />
+          <TaskInfoProvider>
+            <RouterProvider router={router} />
+          </TaskInfoProvider>
         </UserProvider>
       </LocalizationProvider>
     </>

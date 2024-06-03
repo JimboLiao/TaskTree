@@ -5,15 +5,17 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
+import { Dayjs } from "dayjs";
 
 interface TaskCardProps {
   title: string;
-  start: string;
-  end: string;
+  start: Dayjs;
+  end: Dayjs;
   description: string;
   statusColor: string;
   importanceColor: string;
   categoryColor: string;
+  isAllDay: boolean;
   onTaskCard: () => void;
 }
 
@@ -25,8 +27,13 @@ const TaskCard: React.FC<TaskCardProps> = ({
   statusColor,
   importanceColor,
   categoryColor,
+  isAllDay,
   onTaskCard,
 }) => {
+  const time = isAllDay
+    ? start.format("MMM D") // Formats date as 'Month day', e.g., 'Apr 7'
+    : `${start.format("h:mm A")} - ${end.format("h:mm A")}`; // Formats time as 'hour:minute AM/PM', e.g., '3:00 PM'
+
   return (
     <Card
       sx={{
@@ -72,7 +79,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
             </Box>
           </Box>
           <Typography sx={{ mb: "8px" }} textAlign="right">
-            {start} - {end}
+            {time}
           </Typography>
           <Typography variant="body2">{description}</Typography>
         </CardContent>

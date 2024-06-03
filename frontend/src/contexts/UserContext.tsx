@@ -1,12 +1,12 @@
 import { createContext, useContext, useState } from "react";
 import {
-  User,
   getUserProfileApi,
   googleLoginApi,
   loginApi,
   logoutApi,
   signupApi,
 } from "../api/userAPI";
+import { User } from "../../../config/type";
 
 interface UserContextType {
   user: User | undefined;
@@ -28,8 +28,8 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await loginApi(email, password);
-      setUser(response.user);
+      const data = await loginApi(email, password);
+      setUser(data);
     } catch (err) {
       console.error(err);
       throw Error("login error");
@@ -57,7 +57,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      logoutApi();
+      await logoutApi();
       setUser(undefined);
     } catch (err) {
       console.error(err);

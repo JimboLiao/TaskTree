@@ -9,15 +9,25 @@ const StyledListItem = styled(ListItem)(({ color }) => ({
 interface SideBarItemProps {
   color?: string;
   text: string;
+  onClick?: () => void;
 }
-const SideBarItem: React.FC<SideBarItemProps> = ({ color = "#FFF", text }) => {
+const SideBarItem: React.FC<SideBarItemProps> = ({
+  color = "#FFF",
+  text,
+  onClick,
+}) => {
   return (
     <StyledListItem color={color}>
-      <ListItemButton>
+      <ListItemButton onClick={onClick || handleClick}>
         <ListItemText>{text}</ListItemText>
       </ListItemButton>
     </StyledListItem>
   );
+
+  function handleClick() {
+    // default behavior
+    console.log(`You clicked the ${text} button.`);
+  }
 };
 
 export default SideBarItem;

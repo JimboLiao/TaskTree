@@ -8,12 +8,12 @@ import {
 } from "@mui/material";
 
 interface RemindSelectorProps {
-  reminderTime: number;
+  reminderTime?: number;
   onChangeReminderTime: (event: SelectChangeEvent<number>) => void;
 }
 
 const RemindSelector: React.FC<RemindSelectorProps> = ({
-  reminderTime,
+  reminderTime = 10,
   onChangeReminderTime,
 }) => {
   return (

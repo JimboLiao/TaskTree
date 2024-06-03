@@ -85,14 +85,3 @@ export const treeData = [
     categoryColor: "#1983FF",
   },
 ];
-export enum TaskStatus {
-  TODO = "todo",
-  DOING = "doing",
-  DONE = "done",
-}
-
-export enum TaskImportance {
-  HIGH = "high",
-  NORMAL = "normal",
-  LOW = "low",
-}

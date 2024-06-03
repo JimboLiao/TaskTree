@@ -19,12 +19,78 @@ model User {
   password     String?  @db.VarChar(255)
   username     String?  @db.VarChar(45)
   createTime   DateTime @map("create_time") @db.Timestamp()
-  updateTime   DateTime @map("update_time") @db.Timestamp()
+  updateTime   DateTime @updatedAt @map("update_time") @db.Timestamp()
   refreshToken String?  @map("refresh_token") @db.VarChar(255)
+  // relations
+  taskList     TaskOfUser[]
+  categoryList Category[]
 }
 
 model Token {
   id         Int      @id @default(autoincrement())
   token      String   @unique @db.VarChar(255)
   createTime DateTime @map("create_time") @db.Timestamp()
+}
+
+model Task {
+  id           Int            @id @default(autoincrement())
+  title        String?        @db.VarChar(45)
+  start        DateTime
+  end          DateTime
+  description  String?        @db.VarChar(255)
+  isAllDay     Boolean        @default(true) @map("is_all_day")
+  status       TaskStatus     @default(TODO)
+  importance   TaskImportance @default(NORMAL)
+  reminder     Int?           @default(30)
+  parentTaskId Int?           @map("parent_task_id")
+  location     String?        @db.VarChar(255)
+  updateTime   DateTime       @updatedAt @map("update_time") @db.Timestamp()
+  createTime   DateTime       @map("create_time") @db.Timestamp()
+  // relations
+  category     Category[]
+  resources    Resource[]
+  attendee     TaskOfUser[]
+}
+
+model TaskOfUser {
+  id          Int            @id @default(autoincrement())
+  // google event id
+  gEventId     String?        @map("g_event_id") @db.VarChar(255) @unique
+  // relations
+  user         User           @relation(fields: [userId], references: [id])
+  userId       Int            @map("user_id")
+  task         Task           @relation(fields: [taskId], references: [id])
+  taskId       Int            @map("task_id")
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(45)
+  color       String  @default("#207C00") @db.VarChar(45)
+  // google calendar id
+  gCalendarId String? @map("g_calendar_id") @db.VarChar(255) @unique
+  // relations
+  tasks       Task[]
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int     @map("user_id")
+}
+
+model Resource {
+  id      Int    @id @default(autoincrement())
+  content String @db.VarChar(255)
+  // relations
+  task    Task   @relation(fields: [taskId], references: [id])
+  taskId  Int    @map("task_id")
+}
+
+enum TaskStatus {
+  TODO
+  DOING
+  DONE
+}
+
+enum TaskImportance {
+  HIGH
+  NORMAL
+  LOW
 }

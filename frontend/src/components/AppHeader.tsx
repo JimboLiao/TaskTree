@@ -7,10 +7,23 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
 import MemberBtn from "./MemberBtn";
 import LoginButton from "./LoginButton";
+import { useEffect } from "react";
 
 const AppHeader: React.FC = () => {
   let navigate = useNavigate();
-  const { user } = useUserContext();
+  const { user, getUser } = useUserContext();
+  useEffect(() => {
+    async function fetchUser() {
+      await getUser();
+      if (user === undefined) {
+        return navigate("/");
+      }
+      navigate("/workspace/dayview");
+    }
+
+    fetchUser();
+  }, []);
+
   function handleClickLogo(): void {
     navigate("/");
   }

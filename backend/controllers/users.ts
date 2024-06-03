@@ -44,13 +44,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     });
     res.status(200).json({
       status: "success",
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        createTime: user.createTime,
-        updateTime: user.updateTime,
-      },
+      user,
       token: jwt,
     });
   } catch (err) {
@@ -115,7 +109,12 @@ const googleCallback = async (
     let user = await userEntity.getUserByEmail(email);
     if (!user) {
       const refreshToken = tokens.refresh_token || undefined;
-      user = await userEntity.createUser({ email, refreshToken });
+      user = await userEntity.createUser({ email });
+    }
+
+    // update refresh token if there is one
+    if (tokens.refresh_token) {
+      await userEntity.updateRefreshToken(user.id, tokens.refresh_token);
     }
 
     const jwt = signJWT(user.id);
