@@ -97,14 +97,14 @@ async function createTaskApi(
     importance?: TaskImportance;
   },
   categoryId: number | null = null,
-  resources: { content: string }[] = []
+  resources: { content: string }[] | undefined = undefined
 ) {
   const response = await axios.post(
     `${taskApiUrl}/`,
     {
       task: newTask,
-      categoryId: categoryId,
-      resources: resources,
+      categoryId,
+      resources,
     },
     { withCredentials: true }
   );
@@ -112,13 +112,12 @@ async function createTaskApi(
 }
 
 const updateTaskDetailApi = async (taskdetail: TaskDetail) => {
-  const { task, category, attendees, resources } = unwrapTaskDetail(taskdetail);
+  const { task, category, resources } = unwrapTaskDetail(taskdetail);
   const response = await axios.put(
     `${taskApiUrl}/${task.id}`,
     {
       task,
       category,
-      attendees,
       resources,
     },
     { withCredentials: true }
@@ -128,7 +127,7 @@ const updateTaskDetailApi = async (taskdetail: TaskDetail) => {
 };
 
 const addNewTaskAttendeeApi = async (taskId: number, email: string) => {
-  const response = await axios.put(
+  const response = await axios.post(
     `${taskApiUrl}/${taskId}/attendee`,
     {
       email,
