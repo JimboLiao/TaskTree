@@ -23,6 +23,7 @@
     "express": "^4.19.2",
     "googleapis": "^134.0.0",
     "jsonwebtoken": "^9.0.2",
+    "socket.io": "^4.7.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   },
