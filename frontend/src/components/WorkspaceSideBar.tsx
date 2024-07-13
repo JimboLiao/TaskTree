@@ -1,10 +1,12 @@
 import { Divider, List, styled } from "@mui/material";
 import SideBarItem from "./SideBarItem";
-import { useState } from "react";
-import { Category } from "../../../config/type";
+import { useEffect, useState } from "react";
+import { Category, ChatRoom } from "../../../config/type";
 import CategoryModal from "./CategoryModal";
 import { useNavigate } from "react-router-dom";
 import useCategories from "../hooks/useCategories";
+import FloatingChatButton from "./FloatingChatButton";
+import { createChatroomApi, getChatroomsApi } from "../api/chatroomAPI";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -20,7 +22,15 @@ const WorkspaceSideBar: React.FC = () => {
   const { categories, updateCategories } = useCategories();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [rooms, setRooms] = useState<ChatRoom[]>([
+    { id: 1, name: "test room" },
+  ]);
 
+  useEffect(() => {
+    getChatroomsApi().then((data) => {
+      setRooms(data);
+    });
+  }, []);
   return (
     <>
       <StyledContainer>
@@ -52,6 +62,8 @@ const WorkspaceSideBar: React.FC = () => {
         </List>
       </StyledContainer>
 
+      <FloatingChatButton rooms={rooms} onCreateRoom={createRoom} />
+
       <CategoryModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -72,6 +84,14 @@ const WorkspaceSideBar: React.FC = () => {
       navigate(`/workspace/treeview/${id}`);
     };
     return nav;
+  }
+
+  function createRoom(newRoom: string) {
+    if (!rooms.some((room) => room.name === newRoom)) {
+      createChatroomApi(newRoom).then((data) => {
+        setRooms([...rooms, { id: data.id, name: data.name }]);
+      });
+    }
   }
 };
 
