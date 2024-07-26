@@ -208,4 +208,9 @@ router.delete(
   taskController.deletTaskAttendee
 );
 
+router.get(
+  "/subtasks/:parentTaskId/category/:categoryId",
+  taskController.getSubTasks
+);
+
 export default router;

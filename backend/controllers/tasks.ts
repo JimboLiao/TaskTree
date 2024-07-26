@@ -420,6 +420,26 @@ const importTasksFromGoogle = async (
   }
 };
 
+const getSubTasks = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = res.locals.id;
+    let parentTaskId: number | null = parseInt(req.params.parentTaskId, 10);
+    const categoryId: number = parseInt(req.params.categoryId, 10);
+    if (parentTaskId === 0) {
+      parentTaskId = null;
+    }
+    const subTasks = await taskEntity.getSubtasksByParentTaskId(
+      parentTaskId,
+      userId,
+      categoryId
+    );
+
+    res.status(200).json({ status: "success", data: subTasks });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export {
   createTask,
   getTasksInRange,
@@ -430,4 +450,5 @@ export {
   deletTaskAttendee,
   syncTasksToGoogleCalendar,
   importTasksFromGoogle,
+  getSubTasks,
 };
