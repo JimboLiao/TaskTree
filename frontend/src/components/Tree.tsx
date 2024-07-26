@@ -1,31 +1,24 @@
+import React from "react";
 import { Box } from "@mui/material";
 import TreeNode from "./TreeNode";
-import TaskTableModal from "./TaskTableModal";
-import { useState } from "react";
+import { TaskInfo } from "../api/taskAPI";
 
-//@todo interface
-const Tree = ({ treeData }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface TreeProps {
+  treeData: TaskInfo[];
+  onEdit: (taskId: number) => void;
+  onAdd: (taskId: number, cb: () => void) => void;
+}
 
+const Tree: React.FC<TreeProps> = ({ treeData, onEdit, onAdd }) => {
   return (
     <>
       <Box>
-        {treeData.map((node, index) => (
-          <TreeNode key={index} node={node} onEdit={handleEditTreeNode} />
+        {treeData?.map((node) => (
+          <TreeNode key={node.id} node={node} onEdit={onEdit} onAdd={onAdd} />
         ))}
       </Box>
-      <TaskTableModal isModalOpen={isModalOpen} onModalClose={handleClose} />
     </>
   );
-
-  function handleEditTreeNode() {
-    setIsModalOpen(true);
-  }
-  function handleClose() {
-    setIsModalOpen(false);
-    // @todo close modal
-    // send request to api to change update task data
-  }
 };
 
 export default Tree;

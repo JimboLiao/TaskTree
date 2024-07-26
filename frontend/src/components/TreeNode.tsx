@@ -1,37 +1,76 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import Tree from "./Tree";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { TaskInfo, getSubTasksApi } from "../api/taskAPI";
 
-//@todo interface
-const TreeNode = ({ node, onEdit }) => {
+interface TreeNodeProps {
+  node: TaskInfo;
+  onEdit: (taskId: number) => void;
+  onAdd: (taskId: number, cb: () => void) => void;
+}
+
+const TreeNode: React.FC<TreeNodeProps> = ({ node, onEdit, onAdd }) => {
   const {
+    id,
     title,
     start,
     end,
     statusColor,
     importanceColor,
     categoryColor,
-    children,
+    categoryId,
   } = node;
 
-  const [showChildren, setShowChildren] = useState(false);
+  const [showSubtasks, setShowSubtasks] = useState(false);
+  const [subtasks, setSubtasks] = useState<TaskInfo[]>([]);
+  const [update, setUpdate] = useState<number>(0);
 
-  function handleShowChildren() {
-    setShowChildren(!showChildren);
+  const fetchSubtasks = async () => {
+    try {
+      const data = await getSubTasksApi(id, categoryId);
+      setSubtasks(data);
+    } catch (error) {
+      console.error("Error fetching subtasks:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubtasks();
+  }, [showSubtasks, id, categoryId, update]);
+
+  function handleShowsubtasks() {
+    setShowSubtasks(!showSubtasks);
+  }
+  function incrementUpdate() {
+    setUpdate(update + 1);
   }
 
-  const showChildrenBtn = !children ? null : showChildren ? (
-    <IconButton onClick={handleShowChildren}>
-      <ArrowDropUpIcon />
-    </IconButton>
-  ) : (
-    <IconButton onClick={handleShowChildren}>
-      <ArrowDropDownIcon />
-    </IconButton>
-  );
+  const handleAdd = () => {
+    onAdd(id, incrementUpdate);
+  };
+
+  const handleEdit = () => {
+    onEdit(id);
+  };
+
+  const showsubtasksBtn =
+    subtasks.length === 0 ? null : showSubtasks ? (
+      <Tooltip arrow placement="top" title="Hide subtasks">
+        <IconButton onClick={handleShowsubtasks}>
+          <ArrowDropUpIcon />
+        </IconButton>
+      </Tooltip>
+    ) : (
+      <Tooltip arrow placement="top" title="Show subtasks">
+        <IconButton onClick={handleShowsubtasks}>
+          <ArrowDropDownIcon />
+        </IconButton>
+      </Tooltip>
+    );
 
   return (
     <>
@@ -67,14 +106,21 @@ const TreeNode = ({ node, onEdit }) => {
           <Typography fontSize="20px">{title}</Typography>
         </Box>
         <Box sx={{ paddingRight: "8px", color: "#A5A5A5" }}>
-          {start} - {end}
+          {start.format("MMM D").toString()} - {end.format("MMM D").toString()}
         </Box>
-        <IconButton onClick={onEdit}>
-          <EditIcon />
-        </IconButton>
-        {showChildrenBtn}
+        <Tooltip arrow placement="top" title="Edit task">
+          <IconButton onClick={handleEdit}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip arrow placement="top" title="Add subtask">
+          <IconButton onClick={handleAdd}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+        {showsubtasksBtn}
       </Box>
-      {children && showChildren && (
+      {showSubtasks && (
         <Box
           sx={{
             paddingLeft: "10px",
@@ -82,11 +128,11 @@ const TreeNode = ({ node, onEdit }) => {
             borderColor: categoryColor,
           }}
         >
-          <Tree treeData={children} />
+          <Tree treeData={subtasks} onEdit={onEdit} onAdd={onAdd} />
         </Box>
       )}
     </>
   );
 };
 
-export default TreeNode;
+export default React.memo(TreeNode);
