@@ -95,6 +95,7 @@ async function createTaskApi(
     isAllDay?: boolean;
     status?: TaskStatus;
     importance?: TaskImportance;
+    parentTaskId?: number | null;
   },
   categoryId: number | null = null,
   resources: { content: string }[] | undefined = undefined
