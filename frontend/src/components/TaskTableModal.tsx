@@ -362,35 +362,6 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
                 </StyledData>
               </StyledDataContainer>
             </StyledRow>
-
-            {/* Chatroom */}
-            <StyledRow>
-              <StyledHeader>
-                <MessageOutlined />
-              </StyledHeader>
-              <StyledDataContainer>
-                <StyledData>
-                  {/* @todo chatroom feature */}
-                  <ChatHistory messages={messages} />
-                </StyledData>
-                <StyledData display="flex" alignItems="center">
-                  <OutlinedInput
-                    fullWidth
-                    multiline
-                    placeholder="message..."
-                    value={newMessage}
-                    onChange={handleChangeNewMessages}
-                  />
-                  <IconButton
-                    sx={{ padding: "10px" }}
-                    onClick={handleSendMessage}
-                    disabled={newMessage === ""}
-                  >
-                    <Send />
-                  </IconButton>
-                </StyledData>
-              </StyledDataContainer>
-            </StyledRow>
           </StyledContainer>
         ) : (
           // loading taskDetail

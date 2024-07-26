@@ -9,6 +9,7 @@ import {
   Attendee,
 } from "../api/taskAPI";
 import { Category, User, Task } from "../../../config/type";
+import { ChatHistory, RoomMessage } from "../api/chatroomAPI";
 
 function wrapTaskInfo(d: TaskInfoResponse): TaskInfo {
   const { category, ...task } = d;
@@ -97,10 +98,23 @@ function wrapFullCalendarEvent(task: TaskInfo) {
   };
 }
 
+function wrapRoomMessage(history: ChatHistory): RoomMessage {
+  return {
+    id: history.id,
+    chatroomId: history.chatroomToUser.chatroomId,
+    userId: history.chatroomToUser.user.id,
+    username:
+      history.chatroomToUser.user.username || history.chatroomToUser.user.email,
+    content: history.content,
+    createTime: dayjs(history.createTime),
+  };
+}
+
 export {
   wrapTaskInfo,
   wrapAttendee,
   wrapTaskDetail,
   unwrapTaskDetail,
   wrapFullCalendarEvent,
+  wrapRoomMessage,
 };

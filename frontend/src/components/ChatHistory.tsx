@@ -12,12 +12,13 @@ interface ChatHistoryProps {
 const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
   return (
     <Box
-      height="250px"
+      height="100%"
       sx={{
         borderRadius: "4px",
         border: "1px solid",
         overflow: "auto",
         padding: "8px",
+        marginBottom: "8px",
       }}
     >
       {messages.length === 0 ? (

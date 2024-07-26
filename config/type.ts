@@ -44,3 +44,14 @@ export type User = {
   createTime: string;
   updateTime: string;
 };
+
+export type ChatRoom = {
+  id: number;
+  name: string;
+};
+
+export type Message = {
+  id: number;
+  content: string;
+  createTime: string;
+};
