@@ -19,6 +19,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
         overflow: "auto",
         padding: "8px",
         marginBottom: "8px",
+        maxHeight: "580px",
       }}
     >
       {messages.length === 0 ? (
