@@ -95,6 +95,7 @@ async function createTaskApi(
     isAllDay?: boolean;
     status?: TaskStatus;
     importance?: TaskImportance;
+    parentTaskId?: number | null;
   },
   categoryId: number | null = null,
   resources: { content: string }[] | undefined = undefined
@@ -169,6 +170,19 @@ const importEventFromGoogleCalendarApi = async (
   return response.data;
 };
 
+async function getSubTasksApi(parentTaskId: number, categoryId: number) {
+  const response = await axios.get(
+    `${taskApiUrl}/subtasks/${parentTaskId}/category/${categoryId}`,
+    {
+      withCredentials: true,
+    }
+  );
+
+  const data = response.data.data;
+  const wrappedData = data.map((d: TaskInfoResponse) => wrapTaskInfo(d));
+  return wrappedData;
+}
+
 export {
   getTasksInRangeApi,
   getTaskDetailApi,
@@ -178,4 +192,5 @@ export {
   removeTaskAttendeeApi,
   syncTasksToGoogleCalendarApi,
   importEventFromGoogleCalendarApi,
+  getSubTasksApi,
 };

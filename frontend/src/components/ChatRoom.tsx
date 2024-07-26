@@ -33,7 +33,7 @@ const StyledContainer = styled("div")({
 });
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-const socket = io(backendUrl, { path: "/socket" }); // Replace with your backend URL
+const socket = io(backendUrl, { path: "/socket" });
 
 const ChatRoom: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>("");
@@ -58,6 +58,7 @@ const ChatRoom: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log("useEffect");
     if (!roomId) return;
     if (!user) return;
     getChatroomHistoryApi(parseInt(roomId, 10)).then((data) => {
@@ -120,31 +121,31 @@ const ChatRoom: React.FC = () => {
         >
           Add Member
         </Button>
+        <Dialog open={openDialog} onClose={handleDialogClose}>
+          <DialogTitle>Add New member</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="New member email"
+              type="text"
+              fullWidth
+              value={newMember}
+              onChange={(e) => {
+                setNewMember(e.target.value);
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleAddMember} color="primary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
       </WorkspaceTitle>
-      <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Add New member</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="New member email"
-            type="text"
-            fullWidth
-            value={newMember}
-            onChange={(e) => {
-              setNewMember(e.target.value);
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddMember} color="primary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Box
         display="flex"
         flexDirection={"column"}

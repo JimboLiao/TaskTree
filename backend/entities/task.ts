@@ -361,6 +361,35 @@ const deleteTaskAttendee = async ({
   return newAttendee;
 };
 
+const getSubtasksByParentTaskId = async (
+  parentTaskId: number | null,
+  userId: number,
+  categoryId: number
+) => {
+  const tasks = await prisma.task.findMany({
+    where: {
+      parentTaskId: parentTaskId,
+      category: {
+        some: {
+          id: categoryId,
+        },
+      },
+      attendee: {
+        some: {
+          userId: userId,
+        },
+      },
+    },
+    include: {
+      category: {
+        where: { userId: userId },
+        select: { id: true, name: true, color: true },
+      },
+    },
+  });
+  return tasks;
+};
+
 export {
   createTask,
   getTasksInRange,
@@ -371,4 +400,5 @@ export {
   disconnectTaskCategoryRelation,
   updateTaskCategoryRelation,
   addTaskAttendee,
+  getSubtasksByParentTaskId,
 };
