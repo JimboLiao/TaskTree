@@ -3,7 +3,6 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
-  IconButton,
   Input,
   OutlinedInput,
   SelectChangeEvent,
@@ -11,15 +10,12 @@ import {
 } from "@mui/material";
 import {
   AccessTime,
-  AccountTreeOutlined,
   ListOutlined,
   LocationOnOutlined,
-  MessageOutlined,
   NotesOutlined,
   NotificationsNoneOutlined,
   PeopleAltOutlined,
   TaskOutlined,
-  Send,
 } from "@mui/icons-material";
 
 import Modal from "./Modal";
@@ -29,7 +25,6 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import ItemList from "./ItemList";
 import DataEntry from "./DataEntry";
-import ChatHistory from "./ChatHistory";
 import RemindSelector from "./RemindSelector";
 import {
   addNewTaskAttendeeApi,
@@ -69,9 +64,6 @@ const StyledDataContainer = styled(Box)({
 const StyledData = styled(Box)({
   padding: "8px",
 });
-
-//@todo interface
-// a prop to decide render which task
 interface TaskTableModalProps {
   onModalClose: () => void;
   isModalOpen: boolean;
@@ -101,15 +93,6 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
   const [isReminder, setIsReminder] = useState(false);
   const [newAttendee, setNewAttendee] = useState("");
   const [newResource, setNewResource] = useState("");
-  //@todo subtask feature
-  const [subtasks, setSubtasks] = useState(["taskname"]);
-  const [newSubtask, setNewSubtask] = useState("");
-  //@todo messages feature
-  const [messages, setMessages] = useState([
-    { username: "user1", content: "message content" },
-    { username: "user1", content: "message content" },
-  ]);
-  const [newMessage, setNewMessage] = useState("");
 
   return (
     <>
@@ -288,31 +271,6 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
                     onChangeNewData={handleNewAttendee}
                     onAddNewData={handleAddAttendee}
                     disabledCondition={newAttendee === ""}
-                  />
-                </StyledData>
-              </StyledDataContainer>
-            </StyledRow>
-
-            {/* Subtasks */}
-            <StyledRow>
-              <StyledHeader>
-                <AccountTreeOutlined />
-              </StyledHeader>
-              <StyledDataContainer>
-                {/* @todo subtask feature */}
-                {subtasks.length !== 0 && (
-                  <StyledData display="flex" flexWrap="wrap">
-                    <ItemList items={subtasks} onDelete={handleDeleteSubtask} />
-                  </StyledData>
-                )}
-
-                <StyledData>
-                  <DataEntry
-                    newData={newSubtask}
-                    placeholder="Subtask"
-                    onChangeNewData={handleNewSubtask}
-                    onAddNewData={handleAddSubtask}
-                    disabledCondition={newSubtask === ""}
                   />
                 </StyledData>
               </StyledDataContainer>
@@ -515,17 +473,6 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
       });
   }
 
-  function handleNewSubtask(event: React.ChangeEvent<HTMLInputElement>) {
-    setNewSubtask(event.target.value);
-  }
-  function handleAddSubtask() {
-    if (newSubtask === "") return;
-    setSubtasks([...subtasks, newSubtask]);
-    setNewSubtask("");
-  }
-  function handleDeleteSubtask(deleteIndex: number) {
-    setSubtasks(subtasks.filter((_, index) => index !== deleteIndex));
-  }
   function handleNewResource(event: React.ChangeEvent<HTMLInputElement>) {
     setNewResource(event.target.value);
   }
@@ -550,15 +497,6 @@ const TaskTableModal: React.FC<TaskTableModalProps> = ({
   function handleChangeNotes(event: React.ChangeEvent<HTMLInputElement>) {
     if (!taskDetail) return;
     setTaskDetail({ ...taskDetail, description: event.target.value });
-  }
-  function handleChangeNewMessages(event: React.ChangeEvent<HTMLInputElement>) {
-    setNewMessage(event.target.value);
-  }
-  function handleSendMessage() {
-    if (!newMessage) return;
-    //@todo user name should be the login member's name
-    setMessages([...messages, { username: "user", content: `${newMessage}` }]);
-    setNewMessage("");
   }
   function handleClose() {
     if (!taskDetail) return;
