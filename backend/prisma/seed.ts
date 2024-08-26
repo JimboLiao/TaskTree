@@ -16,9 +16,12 @@ async function main() {
   await prisma.taskOfUser.deleteMany();
   await prisma.resource.deleteMany();
   await prisma.category.deleteMany();
-  await prisma.user.deleteMany();
   await prisma.token.deleteMany();
   await prisma.task.deleteMany();
+  await prisma.message.deleteMany();
+  await prisma.chatroomToUser.deleteMany();
+  await prisma.chatroom.deleteMany();
+  await prisma.user.deleteMany();
 
   const hashpassword = await bcrypt.hash(dummyUser.password, 10);
   const date = new Date();
