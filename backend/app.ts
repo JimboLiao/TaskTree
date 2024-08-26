@@ -11,7 +11,7 @@ import initSwagger from "./utils/swagger";
 
 dotenv.config();
 
-const app: Express = express();
+export const app: Express = express();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
